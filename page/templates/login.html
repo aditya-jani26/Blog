@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login Page</title>
+</head>
+<style>
+    body {
+        background-color: #f0f0f0;
+        padding: 50px;
+    }
+    
+    form {
+        background-color: #fff;
+        padding: 40px;
+        border: 1px solid #ddd;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+    
+    input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+    }
+    
+    button {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+    }
+    </style>
+<body>
+	<div class="login-box">
+
+		<h1>Login</h1>
+		<form action="{% url 'login' %}" method="post">
+            
+            <div>
+                <button class="btn btn-primary  btn-lg px-3 mb-0 gradient-custom" type="submit" style="margin-left: 87%;"><a href="{% url 'registration' %}" style="color: rgb(141, 0, 0);">Back</a></button>
+            </div>
+            {% csrf_token %}
+			<p>Email</p>
+			<input type="text" name="uEmail" placeholder="Enter Email">
+			<p>Password</p>
+			<input type="password" name="uPass" placeholder="Enter uPass" required>
+			<button type="submit" class="login"> <a href="{% url 'login' %}"></a>login</button>
+         
+		</form>
+
+	</div>
+
+</body>
+</html>
+
