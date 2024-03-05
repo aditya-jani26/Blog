@@ -43,8 +43,9 @@
 
 		<h1>Login</h1>
 		<form action="{% url 'login' %}" method="post">
-            
+            <div style="margin:auto;"> <p>{{msg}}</p></div>
             <div>
+            
                 <button class="btn btn-primary  btn-lg px-3 mb-0 gradient-custom" type="submit" style="margin-left: 87%;"><a href="{% url 'registration' %}" style="color: rgb(141, 0, 0);">Back</a></button>
             </div>
             {% csrf_token %}

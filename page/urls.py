@@ -7,11 +7,13 @@ urlpatterns = [
 
     path("registration/", views.registration, name="registration"),
     path("login/", views.login,name="login"),
-    path("site/", views.site, name="site"),
+    path("home/", views.home, name="home"),
     # path("blogs", views.blogs,name="blogs"),
     path("addblog/", views.addblog, name="addblog"),
+    path("profile/", views.profile, name="profile"),
     path("myblog/", views.myblog,name="myblog"),
-    path("Home/", views.home, name="home"),
+    path("logout/", views.logout, name="logout"),
+]
     # path("rating/", views.rating, name="rating"),
     # path("comments/", views.comments, name="comments"),
 
@@ -21,8 +23,3 @@ urlpatterns = [
     # path("change_password/", views.change_password, name="change_password"),
 
     # path("author_profiles/", views.author_profiles, name="author_profiles"),
-
-    path("logout/", views.logout, name="logout"),
-    
-    
-]
