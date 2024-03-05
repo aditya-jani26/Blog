@@ -76,16 +76,22 @@ def home(request):
 def addblog(request): 
 
     if request.method == 'POST':
-                date = datetime.date.today()
-                title = request.POST.get('title')
-                description = request.POST.get('description')
-                
-                obj= members.objects.get(uEmail=request.session['uEmail'])
-                logedinUser = get_object_or_404(members,membersId=obj.membersId)
-                # print(logedinUser.membersId)
-                blogs = blog.objects.create(id=logedinUser.membersId, date=date, title=title, description=description)
-                blogs.save()
-                return redirect('home')
+        date = datetime.date.today()
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        image = request.FILES.get('image')
+        
+        obj= members.objects.get(uEmail=request.session['uEmail'])
+        logedinUser = get_object_or_404(members,membersId=obj.membersId)
+        # print(logedinUser.membersId)
+        obj = blog.objects.create(membersId=logedinUser, date=date, title=title, description=description,image=image)
+        fs = FileSystemStorage()
+        filename = fs.save(image.name, image)
+        uploaded_img_url = fs.url(filename)
+        obj.image = uploaded_img_url
+        obj.save()
+        
+        return redirect('home')
     return render(request,'addblog.html')
 
 
@@ -150,3 +156,5 @@ def profile(request):
     context ={}
     context['form'] = uform
     return render(request, 'profile.html', context)
+
+# =================================================================================================
