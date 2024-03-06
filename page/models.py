@@ -1,44 +1,42 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils.timezone import now
 
 class members(models.Model):
     membersId = models.AutoField(primary_key=True, unique=True)
-    uName = models.CharField(max_length=100)
+    uName = models.CharField(max_length=100, null=True, blank=True)
     uEmail = models.EmailField(max_length=100,null=True,unique=True)
-    uPass = models.CharField(max_length=100)
+    uPass = models.CharField(max_length=100,null=True,unique=True)
     
 
-    def __str__(self):
-        return self.uName
     
 
 class blog(models.Model):
     membersId = models.ForeignKey(members,on_delete=models.CASCADE,null=True)
+    blogId = models.AutoField(primary_key=True)
     date = models.DateField(null=True)
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=500)
     image = models.ImageField(upload_to='images/')
 
-    def __str__(self):
-        return self.title
+
     
 
-class comments(models.Model):
-    person = models.ForeignKey(members,on_delete=models.CASCADE,null=True)
-    date = models.DateField(auto_now_add=True)
-    description = models.TextField(max_length=1000)
+class Comment(models.Model):
+    membersId = models.ForeignKey(members, on_delete=models.CASCADE, null=True)
+    blog_id = models.ForeignKey(blog, on_delete=models.CASCADE, null=True)
+    comment_id = models.AutoField(primary_key=True)
+    commentersName = models.CharField(max_length=100)
+    commentContent = models.TextField(max_length=300)
+    commentDate = models.DateTimeField(default=now)
 
-    def __str__(self):
-        return self.person.membersId
+
     
 class rating (models.Model):
     user = models.ForeignKey(members, on_delete=models.CASCADE)
-    postid = models.ForeignKey(blog, on_delete=models.CASCADE)
+    blogId = models.ForeignKey(blog, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
 
-    def __str__(self):
-        return f"{self.postid}: {self.rating}"
 
 
 

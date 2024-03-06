@@ -13,6 +13,7 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
     path("myblog/", views.myblog,name="myblog"),
     path("logout/", views.logout, name="logout"),
+    path("add_comment/", views.add_comment, name="add_comment"),
 ]
     # path("rating/", views.rating, name="rating"),
     # path("comments/", views.comments, name="comments"),
