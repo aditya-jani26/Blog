@@ -60,28 +60,7 @@
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   }
   
-  .flip-card:hover .flip-card-inner {
-    transform: rotateY(180deg);
-  }
-  
-  .flip-card-front, .flip-card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-  }
-  
-  .flip-card-front {
-    background-color: #811212;
-    color: black;
-  }
-  
-  .flip-card-back {
-    background-color: #2980b9;
-    color: rgb(101, 2, 2);
-    transform: rotateY(180deg);
-  }
+
 
     .collapsible {
     
@@ -117,10 +96,6 @@
           <a class="nav-link" href="{% url 'addblog' %}">Add blog</a>
           <a class="nav-link" href="{% url 'profile' %}">Profile</a>
           <a class="nav-link" href="{% url 'logout' %}">logout</a>
-          <!-- <div class="chip">
-            <img src="img_avatar.png" alt="Person" width="96" height="96">
-            John Doe
-          </div> -->
         </div>
       </div>
     </div>
@@ -133,36 +108,21 @@
   
         <div class="col-md-7 px-3">
           <div class="card-block px-6">
-            <p class="card-text">{{ field.blogDate }}</p>
+            <p class="card-text">{{ field.date }} {{ field.time }}</p>
             <!-- <i class="fa fa-quote-left text-black"></i> -->
-            
             <h4 class="card-title">{{field.title}}</h4>
             <p class="card-text">
                 {{field.description}}
             </p>
           </div>
         </div>
-        {% endfor  %}
-          <div class="col-md-5">
-              <div>
-                  <img src="{{ field.images }}" alt="image" class="img-fluid" style="width:100%; height:100%; border-radius: 7px;">
-              </div>
-          </div>
+        <div class="col-md-5">
+
           <div>
-          </div>
-          <div class="flip-card">
-            <div class="flip-card-inner">
-              <div class="flip-card-front">
-                <img src="/Users/yudizsolutionsltd./Blog/page/images/IMG-20230921-WA0010.jpg" alt="Avatar" style="width:300px;height:300px;">
-              </div>
-              <div class="flip-card-back">
-                <h1>Aditya Jani</h1> 
-                <p>Python Engineer</p> 
-                <p>Follower= 999</p>
-              </div>
-            </div>
+              <img src= '{{ field.images }}' alt="images"  class="img-fluid"style="width:100%; height:100%; border-radius: 7px;">
           </div>
 
-          </div>
+      </div>
+        {% endfor  %}
           </body>
 </html>

@@ -8,39 +8,97 @@
 </head>
 <style>
     body {
-        background-color: #85040a;
+        background-color: #048585;
         padding: 50px;
     }
     
     form {
-        background-color: #ffffff;
+        background-color: #591515;
         padding: 40px;
 
     }
 </style>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <img style="height:50px; width:50px;  border-radius: 50%;" src="https://logo.com/image-cdn/images/kts928pd/production/3d0a1942ea617825e187c3c9a3811a5d93a331be-370x366.png?w=1080&q=72" >
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-              <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
-              <a class="nav-link" href="{% url 'myblog' %}">My blog</a>
-              <a class="nav-link" href="{% url 'addblog' %}">Add blog</a>
-              <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-              <a class="nav-link" href="{% url 'logout' %}">logout</a>
-            </div>
-          </div>
+  
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <img style="height:50px; width:50px;  border-radius: 50%;" src="https://logo.com/image-cdn/images/kts928pd/production/3d0a1942ea617825e187c3c9a3811a5d93a331be-370x366.png?w=1080&q=72" >
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+          <a class="nav-link" href="{% url 'myblog' %}">My blog</a>
+          <a class="nav-link" href="{% url 'addblog' %}">Add blog</a>
+          <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+          <a class="nav-link" href="{% url 'logout' %}">logout</a>
         </div>
-      </nav>     
-<form action = "" method = "post"> 
-    <p>User Information Form</p>
-    {% csrf_token %} 
-    {{form}} 
-    <input type="submit" value="Submit"> 
-</form> 
+      </div>
+      <div class="d-flex align-items-center">
+        {% for user in users %}
+          {% if user.userEmail == request.session.email %}
+            <a href="{% url 'profile' %}">
+              <img
+              src="{{ user.userImage }}"
+              class="rounded-circle"
+              height="45"
+              width="48"
+              alt="User Image"
+              loading="lazy"
+              />
+            </a>  
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </nav> 
+        <!-- Profile -->
+        <section class="vh-100" style="background-color:gradient-custom">
+          {% for user in users %}
+            {% if user.userEmail == request.session.email %}
+              <div class="container py-5 h-100">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                  <div class="col col-md-9 col-lg-7 col-xl-5">
+                    <div class="card" style="border-radius: 15px;">
+                      <div class="card-body p-4">
+                        <div class="d-flex text-black">
+                          <div class="flex-shrink-0">
+                            <img src="{{ user.images }}"
+                              alt="Generic placeholder image" class="img-fluid"
+                              style="width: 180px; border-radius: 10px;">
+                          </div>
+                          <div class="flex-grow-1 ms-3">
+                            <h2 class="mb-1">{{ user.uName }}</h2>
+                            <p class="mb-2 pb-1" style="color: #2b2a2a;">{{ user.uEmail }}</p>
+                            <div class="d-flex justify-content-start rounded-3 p-2 mb-2"
+                              style="background-color: #efefef;">
+                              <div>
+                                <p class="small text-muted mb-1">Following</p>
+                                <p class="mb-0">41</p>
+                              </div>
+                              <div class="px-3">
+                                <p class="small text-muted mb-1">Followers</p>
+                                <p class="mb-0">976</p>
+                              </div>
+                              <div>
+                                <p class="small text-muted mb-1">Rating</p>
+                                <p class="mb-0">8.5</p>
+                              </div>
+                            </div>
+                            <!-- <div class="d-flex pt-1">
+                              <button type="button" class="btn btn-outline-primary me-1 flex-grow-1">Chat</button>
+                              <button type="button" class="btn btn-primary flex-grow-1">Follow</button>
+                            </div> -->
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </section>
 </body>
 </html>

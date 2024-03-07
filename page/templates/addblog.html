@@ -8,19 +8,59 @@
 </head>
 <style>
     body {
-        background-color: #275675;
+        background-color: #1a697b; /* Light gray background */
         padding: 50px;
+        font-family: Arial, sans-serif; /* Default font */
     }
     
     form {
         background-color: #ffffff;
-        padding: 40px;
-        border: 2px solid #be0202;
-        box-shadow: 0px 0px 10px rgba(154, 15, 15, 0.1);
+        padding: 30px; /* Reduced padding */
+        border: 2px solid #007bff; /* Blue border */
+        box-shadow: 0px 0px 20px rgba(0, 123, 255, 0.3); /* Increased box shadow */
         max-width: 500px;
         margin: 0 auto;
+        border-radius: 10px; /* Same border radius */
+    }
+
+    /* Improved styling for input fields */
+    input[type="text"],
+    input[type="email"],
+    textarea {
+        width: 100%;
+        padding: 12px; /* Increased padding */
+        margin-bottom: 20px;
+        border: 1px solid #d03f3f; /* Light gray border */
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    /* Improved styling for submit button */
+    input[type="submit"] {
+        width: 100%;
+        padding: 12px; /* Increased padding */
+        border: none;
+        background-color: #007bff; /* Blue background color */
+        color: #ffffff;
+        font-size: 18px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Style for form labels */
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    /* Style for form heading */
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
     }
 </style>
+
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
@@ -43,7 +83,7 @@
     <div class="row d-flex justify-content-center">
         <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">
         
-            <h3 style="color: rgb(142, 26, 26);">Add Own Blog</h3>
+            <h3 style="color: rgb(142, 26, 26);">Add your Blog</h3>
             
             <div class="card">
                 <h5 class="text-center mb-4 gradient-custom text-white" style="border-radius: .5rem;">Enter Blog details</h5>
@@ -55,14 +95,14 @@
                     </div> -->
                     
                         <div class="row justify-content-between text-left">
-                            <div class="form-group col-sm-12 flex-column d-flex"> <label class="form-control-label px-4"> Title<span class="text-danger">*</span></label> <input type="text" id="email" name="title" onblur="validate(5)" style="width: 400px;"> </div>
+                            <div class="form-group col-sm-12 flex-column d-flex"> <label class="form-control-label px-4"> Title<span class="text-danger">*</span></label> <input type="text" id="email" name="title" onblur="validate(5)" style="width: 400px;" required> </div>
                             <!-- <div class="form-group col-sm-6 flex-column d-flex"> <label class="form-control-label px-3">Phone number<span class="text-danger"> *</span></label> <input type="text" id="mob" name="mob" placeholder="" onblur="validate(4)"> </div> -->
                         </div>
                         <div class="row justify-content-between text-center">
-                            <div class="form-group col-sm-6 flex-column d-flex"> <label class="form-control-label px-3">Description<span class="text-danger">*</span></label> <textarea id="job" name="description" onblur="validate(5)" style="width: 400px;"> </textarea></div>
+                            <div class="form-group col-sm-6 flex-column d-flex"> <label class="form-control-label px-3">Description<span class="text-danger">*</span></label> <textarea id="job" name="description" onblur="validate(5)" style="width: 400px;" required> </textarea></div>
                         </div>
                     <div class="row justify-content-between text-left">
-                        <div class="form-group col-12 flex-column d-flex"> <label class="form-control-label px-3">Blog Image<span class="text-danger"> *</span></label> <input type="file" id="ans" name="image" placeholder="" onblur="validate(6)"> </div>
+                        <div class="form-group col-12 flex-column d-flex"> <label class="form-control-label px-3">images<span class="text-danger"> *</span></label> <input type="file" id="ans" name="images" placeholder="" onblur="validate(6)" required> </div>
                     </div>
                     <div class="row justify-content-end">
                         <div class="form-group col-sm-6"> 

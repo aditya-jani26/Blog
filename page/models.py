@@ -7,20 +7,25 @@ class members(models.Model):
     uName = models.CharField(max_length=100, null=True, blank=True)
     uEmail = models.EmailField(max_length=100,null=True,unique=True)
     uPass = models.CharField(max_length=100,null=True,unique=True)
-    
+    uabout = models.TextField(max_length=500, null=True, blank=True)
+    images = models.ImageField(upload_to='')
 
+
+class members_profile(models.Model):
+    user = models.OneToOneField(members, on_delete=models.CASCADE)
+    followers = models.ManyToManyField(members, related_name='following_users', blank=True)
+    following = models.ManyToManyField(members, related_name='followers_users', blank=True)
     
 
 class blog(models.Model):
     membersId = models.ForeignKey(members,on_delete=models.CASCADE,null=True)
     blogId = models.AutoField(primary_key=True)
     date = models.DateField(null=True)
+    time = models.TimeField(null=True)
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=500)
-    image = models.ImageField(upload_to='images/')
+    images = models.ImageField(upload_to='')
 
-
-    
 
 class Comment(models.Model):
     membersId = models.ForeignKey(members, on_delete=models.CASCADE, null=True)
@@ -31,16 +36,10 @@ class Comment(models.Model):
     commentDate = models.DateTimeField(default=now)
 
 
-    
 class rating (models.Model):
     user = models.ForeignKey(members, on_delete=models.CASCADE)
     blogId = models.ForeignKey(blog, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
-
-
-
-
-
 
 # Create your models here.
 # =================================================================

@@ -16,61 +16,30 @@ def main(request):
     return render(request,'main.html')
 
 
+ 
 # ====-register-=========================-register-=======================-register-================================================
-# This is for new user 
-
+# This is for new user
 def registration(request):
         if request.method == 'POST':
 
             uName = request.POST.get('uName')
             uEmail = request.POST.get('uEmail')
             uPass = request.POST.get('uPass')
+            image = request.FILES.get('image')
             Enc_passworrd = make_password(uPass)
+            
+            fs = FileSystemStorage()
+            reg_images = fs.save(image.name, image)
+            uploaded_img_url = fs.url(reg_images)
+            reg_images.images = uploaded_img_url
+            reg_images.save()
 
-
-            newPerson = members.objects.create(uName=uName, uEmail=uEmail, uPass=Enc_passworrd)
+            newPerson = members.objects.create(uName=uName, uEmail=uEmail, uPass=Enc_passworrd,image=image)
             newPerson.save()
-
             request.session['uEmail'] = uEmail
             return redirect("login")
         return render(request,'registration.html')
 
-# ====-login-=========================-login-=======================-login-================================================
-# This is used for members of the the site
-
-def login(request):
-        if request.method == 'POST':
-                uEmail = request.POST.get('uEmail')
-                uPass = request.POST.get('uPass')
-                Enc_passworrd = make_password(uPass)
-
-            # user = request.user
-
-                user = User.objects.get(username = "admin")
-            # print(user)
-
-                if members.objects.filter(uEmail=uEmail, uPass=Enc_passworrd).exists():  
-                    request.session['uEmail'] = uEmail
-                    return redirect('home')
-                elif members.objects.filter(uEmail=members.uEmail).exists() and check_password(uPass, members.uPass):
-                    request.session['uEmail'] = uEmail
-                    return redirect('home')
-                else:
-                    msg = 'Errors:Email  or password not is invalid' 
-                    return render(request,"login.html",{"msg":msg})
-        return render(request, 'login.html')
-
-# ====-site-=========================-site-=======================-site-================================================
-# This is the main main site where the user will reached after login
-@login_required
-def home(request):
-    uEmail = request.session.get('uEmail')
-    if uEmail:
-        user_instance = get_object_or_404(members, uEmail=uEmail)
-        myblog = members.objects.filter(membersId=user_instance.membersId) 
-        return render(request,'home.html',{'myblog':myblog})    
-    else:
-        return redirect('login')
 # ===========addblog======================addblog====================================addblog============================
     # This is used when any member want to add a new blog
 
@@ -78,6 +47,7 @@ def addblog(request):
 
     if request.method == 'POST':
         date = datetime.date.today()
+        time = datetime.datetime.now()
         title = request.POST.get('title')
         description = request.POST.get('description')
         images = request.FILES.get('images')
@@ -85,33 +55,63 @@ def addblog(request):
         obj= members.objects.get(uEmail=request.session['uEmail'])
         logedinUser = get_object_or_404(members,membersId=obj.membersId)
         # print(logedinUser.membersId)
-        obj = blog.objects.create(membersId=logedinUser, date=date, title=title, description=description,image=images)
+        obj = blog.objects.create(membersId=logedinUser, date=date, title=title, description=description,images=images,time=time)
         fs = FileSystemStorage()
 
-         
-
-         
         filename = fs.save(images.name, images)
         uploaded_img_url = fs.url(filename)
-        obj.image = uploaded_img_url
+        obj.images = uploaded_img_url
         obj.save()
         return redirect('home')
     return render(request,'addblog.html')
+# ====-login-=========================-login-=======================-login-================================================
+# This is used for members of the the site
+
+def login(request):
+
+    if request.method == 'POST':    
+        uEmail = request.POST.get('uEmail')
+        uPass = request.POST.get('uPass') 
+
+        try:
+            loginUser = members.objects.get(uEmail=uEmail)
+        except Exception as e:
+            loginUser = None
+
+        user = request.user
+
+        if members.objects.filter(uEmail=uEmail).exists() and check_password(uPass, loginUser.uPass):  
+            request.session['uEmail'] = uEmail
+            return redirect('home')
+        elif User.objects.filter(email=user.email).exists() and check_password(uPass, request.user.uPass):
+            request.session['email'] = user.email
+            return redirect('adminDash')
+        # else:
+        #     if loginUser.is_active == False:
+        #         message = "You are De-activated..!!"
+        #         return render(request, "login.html", {'message':message})
+        else:
+            message = "Either Your Email Address or Password is incorrect...!!!"
+            return render(request, "login.html", {'message':message})
+                   
+    return render(request, 'login.html')
+
+
 # ====-myblog-=========================-myblog-=======================-myblog-=============
 # In this all user will only see his own blog
 
 def myblog(request):
-     if request.method == 'GET':
-    
-        obj= members.objects.get(uEmail=request.session['uEmail'])
-        logedinUser = get_object_or_404(members,membersId=obj.membersId)
+    user_email = request.session.get('uEmail')
+    if user_email:
+        users = members.objects.get(uEmail=request.session['uEmail'])
+        user_instance = get_object_or_404(members, membersId = users.membersId)
 
-        myblog = blog.objects.filter(blogId=logedinUser.membersId)
-        return render(request, 'myblog.html', {'myblog': myblog})
-     else:
+        myblogs = blog.objects.filter(membersId=user_instance)
+        loggedUser = members.objects.all()
+        return render(request,'myblog.html', {'myblogs':myblogs, 'loggedUser':loggedUser})
+    else:
         return redirect('login')
-     
-# ====-Home-=========================-Home-=======================-Home-=============
+# ====-site-=========================-site-=======================-site-================================================
 # this is will show all the blog posts
 @login_required
 def home(request):
@@ -130,9 +130,15 @@ def logout(request):
 # This is use to get profile of user and this will creatre profile page where the information of user will be available
 @login_required
 def profile(request):
-    context ={}
-    context['form'] = uform
-    return render(request, 'profile.html', context)
+    users = members.objects.all()
+    return render(request, 'profile.html', {'users': users})
+# =================================================================================================
+
+def members_profile (request,membersId):
+    users = members.objects.filter(membersId=membersId)
+    profiles = members.objects.all()
+    return render(request, 'profile_detail.html', {"users": users, 'profiles': profiles, 'membersId': membersId})
+
 # =================================================================================================
 def add_comment(request, pk):
     uEmail = request.session.get('uEmail')
@@ -156,3 +162,4 @@ def add_comment(request, pk):
             return render(request, 'home.html', {'blog_instance': blog_instance, 'comments': comments_list})
     else:
         return redirect('login')
+# =================================================================================================
