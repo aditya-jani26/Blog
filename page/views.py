@@ -4,19 +4,14 @@ from .models import members
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password,make_password
 from django.contrib.auth.models import User
-from .form import uform
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import members, blog , Comment
 # Create your views here.
 # ====-home-=========================-home-=======================-home-============================================================
 # this will show you link
-
 def main(request):
     return render(request,'main.html')
-
-
- 
 # ====-register-=========================-register-=======================-register-================================================
 # This is for new user
 def registration(request):
@@ -27,16 +22,15 @@ def registration(request):
             uPass = request.POST.get('uPass')
             image = request.FILES.get('image')
             Enc_passworrd = make_password(uPass)
+            newPerson = members.objects.create(uName=uName, uEmail=uEmail, uPass=Enc_passworrd,image=image)
+            newPerson.save()
+            request.session['uEmail'] = uEmail
             
             fs = FileSystemStorage()
             reg_images = fs.save(image.name, image)
             uploaded_img_url = fs.url(reg_images)
             reg_images.images = uploaded_img_url
             reg_images.save()
-
-            newPerson = members.objects.create(uName=uName, uEmail=uEmail, uPass=Enc_passworrd,image=image)
-            newPerson.save()
-            request.session['uEmail'] = uEmail
             return redirect("login")
         return render(request,'registration.html')
 
@@ -44,7 +38,6 @@ def registration(request):
     # This is used when any member want to add a new blog
 
 def addblog(request): 
-
     if request.method == 'POST':
         date = datetime.date.today()
         time = datetime.datetime.now()
@@ -72,34 +65,26 @@ def login(request):
     if request.method == 'POST':    
         uEmail = request.POST.get('uEmail')
         uPass = request.POST.get('uPass') 
-
         try:
             loginUser = members.objects.get(uEmail=uEmail)
         except Exception as e:
             loginUser = None
 
         user = request.user
-
         if members.objects.filter(uEmail=uEmail).exists() and check_password(uPass, loginUser.uPass):  
             request.session['uEmail'] = uEmail
             return redirect('home')
         elif User.objects.filter(email=user.email).exists() and check_password(uPass, request.user.uPass):
             request.session['email'] = user.email
             return redirect('adminDash')
-        # else:
-        #     if loginUser.is_active == False:
-        #         message = "You are De-activated..!!"
-        #         return render(request, "login.html", {'message':message})
         else:
             message = "Either Your Email Address or Password is incorrect...!!!"
-            return render(request, "login.html", {'message':message})
-                   
+            return render(request, "login.html", {'message':message})               
     return render(request, 'login.html')
-
 
 # ====-myblog-=========================-myblog-=======================-myblog-=============
 # In this all user will only see his own blog
-
+@login_required
 def myblog(request):
     user_email = request.session.get('uEmail')
     if user_email:
@@ -111,20 +96,13 @@ def myblog(request):
         return render(request,'myblog.html', {'myblogs':myblogs, 'loggedUser':loggedUser})
     else:
         return redirect('login')
+
 # ====-site-=========================-site-=======================-site-================================================
 # this is will show all the blog posts
 @login_required
 def home(request):
         myblog = blog.objects.all()
         return render(request, 'home.html', {'myblog': myblog})
-
-
-# ====-logout-=========================-logout-=======================-logout-=============
-# this will log out the user and delete the session
-def logout(request):
-    del request.session['uEmail']
-    return render(request, 'login.html')
-
 
 # =================================================================================================
 # This is use to get profile of user and this will creatre profile page where the information of user will be available
@@ -147,19 +125,44 @@ def add_comment(request, pk):
             comment_content = request.POST.get('commentContent')
 
             user_instance = get_object_or_404(members, uEmail=uEmail)
-            blog_instance = get_object_or_404(blog, blog_id=pk)
+            blog_instance = get_object_or_404(blog, blogId=pk)
             
             new_comment = Comment.objects.create(
-                blog_id=blog_instance,
+                blogId=blog_instance,
                 user_id=user_instance,
                 commentContent=comment_content
             )
             new_comment.save()
             return redirect('home')
         else:
-            blog_instance = get_object_or_404(blog, blog_id=pk)
-            comments_list = Comment.objects.filter(blog_id=blog_instance)
+            blog_instance = get_object_or_404(blog, blogId=pk)
+            comments_list = Comment.objects.filter(blogId=blog_instance)
             return render(request, 'home.html', {'blog_instance': blog_instance, 'comments': comments_list})
     else:
         return redirect('login')
-# =================================================================================================
+    
+# -= =================================================================
+def rating(request, pk):
+        user_email = request.session.get('email')
+        if user_email:
+            if request.method == 'POST':
+                
+                ratingValue = request.POST.get('ratingValue')
+                print("Rating Value", ratingValue)
+            
+                obj = members.objects.get(userEmail=request.session['email'])
+                user_instance = get_object_or_404(members, user_id=obj.user_id)
+                blog_instance = get_object_or_404(blog, blog_id=pk)
+
+                if user_instance.userEmail != blog_instance.blogId.uEmail:
+                    rating.objects.update_or_create(blog_id=blog_instance, user_id=user_instance, defaults={'ratingValue': ratingValue})
+                    return redirect('home')
+                else:
+                    return redirect('home')
+        else:
+            return redirect('login') 
+# ====-logout-=========================-logout-=======================-logout-=============
+# this will log out the user and delete the session
+def logout(request):
+    del request.session['uEmail']
+    return render(request, 'login.html')

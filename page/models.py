@@ -30,8 +30,9 @@ class blog(models.Model):
 class Comment(models.Model):
     membersId = models.ForeignKey(members, on_delete=models.CASCADE, null=True)
     blog_id = models.ForeignKey(blog, on_delete=models.CASCADE, null=True)
-    comment_id = models.AutoField(primary_key=True)
+    
     commentersName = models.CharField(max_length=100)
+    comment_id = models.AutoField(primary_key=True)
     commentContent = models.TextField(max_length=300)
     commentDate = models.DateTimeField(default=now)
 

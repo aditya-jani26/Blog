@@ -132,7 +132,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = '/static/'
 MEDIA_URL = ''
 MEDIA_ROOT = os.path.join(BASE_DIR, 'page/images')
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'page/profile')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
+# EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'adiyudiz718@gmail.com ' 
+# EMAIL_HOST_PASSWORD = '6353yudiz592494hellO '
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False

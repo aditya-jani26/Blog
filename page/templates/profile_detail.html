@@ -14,105 +14,77 @@
     <title>Profile</title>
 </head>
 <style>
-    .gradient-custom {
-        background: #6a11cb;
-        background: -webkit-linear-gradient(to right, #cb356b, #bd3f32);
-        background: linear-gradient(to right, #cb356b, #bd3f32)
-    }
+  body {
+      background-color: #048585;
+      padding: 50px;
+  }
+  
+  form {
+      background-color: #591515;
+      padding: 90px;
 
-    body {
-        background: #6a11cb;
-        background: -webkit-linear-gradient(to right, #cb356b, #bd3f32);
-        background: linear-gradient(to right, #cb356b, #bd3f32)
-      }
-      .title {
-       
-          margin-bottom: 50px;
-          text-transform: uppercase;
-      }
-      
-      .card-block {
-          font-size: 1em;
-          position: relative;
-          margin: 0;
-          padding: 1em;
-          border: none;
-          border-top: 1px solid rgba(34, 36, 38, .1);
-          box-shadow: none;
-          
-           
-      }
-      .card {
-          font-size: 1em;
-          overflow: hidden;
-          padding: 5;
-          border: none;
-          border-radius: .7rem;
-          box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
-          margin-top:20px;
-      }
-      
 
-      .btn {
-        margin-top: auto;
-      }
-
-      h1,
-      .navbar-brand,
-      .navbar-nav a {
-        font-family: 'Gill Sans', sans-serif;
-      }
-
-      .rating-header {
-        margin-top: -10px;
-        margin-bottom: 10px;
-    }
+  }
+  .card-block {
+    font-size: 1em;
+    position: relative;
+    margin: 0;
+    padding: 1em;
+    border: none;
+    border-top: 1px solid rgba(34, 36, 38, .1);
+    box-shadow: none;
+    
      
-      
+}
+.card {
+    font-size: 1em;
+    overflow: hidden;
+    padding: 5;
+    border: none;
+    border-radius: .7rem;
+    box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
+    margin-top:20px;
+}
+
+
+.btn {
+  margin-top: auto;
+}
 </style>
 <body>
-
-    <nav class="navbar navbar-expand-lg navbar-dark p-5 gradient-custom pb-2 pt-3">
-        <a class="navbar-brand text-white mx-4" href="#">Just Blog it  </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarText">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link text-white mx-3" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-white mx-3" href="{% url 'myBlog' %}">My Blog</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-white mx-3" href="{% url 'content' %}">Add Content</a>
-            </li> 
-            <li class="nav-item">
-              <a class="nav-link text-white mx-3" href="{% url 'changePass' %}">Change Password </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white mx-3" href="{% url 'logout' %}">Log out</a>
-              </li>
-          </ul>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <img style="height:50px; width:50px;  border-radius: 50%;" src="https://logo.com/image-cdn/images/kts928pd/production/3d0a1942ea617825e187c3c9a3811a5d93a331be-370x366.png?w=1080&q=72" >
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+          <a class="nav-link" href="{% url 'myblog' %}">My blog</a>
+          <a class="nav-link" href="{% url 'addblog' %}">Add blog</a>
+          <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+          <a class="nav-link" href="{% url 'logout' %}">logout</a>
         </div>
-        <div class="d-flex align-items-center">
-          {% for user in users %}
-            {% if user.userEmail == request.session.email %}
-              <a href="{% url 'profile' %}">
-                <img
-                src="{{ user.userImage }}"
-                class="rounded-circle"
-                height="45"
-                width="48"
-                alt="User Image"
-                loading="lazy"
-                />
-              </a>  
-            {% endif %}
-          {% endfor %}
-        </div>
-      </nav>
+      </div>
+      <div class="d-flex align-items-center">
+        {% for user in users %}
+          {% if user.userEmail == request.session.email %}
+            <a href="{% url 'profile' %}">
+              <img
+              src="{{ user.userImage }}"
+              class="rounded-circle"
+              height="45"
+              width="48"
+              alt="User Image"
+              loading="lazy"
+              />
+            </a>  
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </nav> 
       
       <section class="vh-100" style="background-color:gradient-custom">
         {% for user in users %}
@@ -133,18 +105,6 @@
                           <p class="mb-2 pb-1" style="color: #2b2a2a;">{{ user.uabout }}</p>
                           <div class="d-flex justify-content-start rounded-3 p-2 mb-2"
                             style="background-color: #efefef;">
-                            <div>
-                              <p class="small text-muted mb-1">Following</p>
-                              <p class="mb-0">0</p>
-                            </div>
-                            <div class="px-3">
-                              <p class="small text-muted mb-1">Followers</p>
-                              <p class="mb-0">0</p>
-                            </div>
-                            <div>
-                              <p class="small text-muted mb-1">Rating</p>
-                              <p class="mb-0">0</p>
-                            </div>
                           </div>
                           <div class="d-flex pt-1">
 
@@ -159,7 +119,6 @@
                                   <button type="submit" class="btn btn-primary">Follow</button>
                               </form>
                               {% endif %} -->
-                              
                             <!-- <button type="button" class="btn btn-primary flex-grow-1">Follow</button> -->
                           </div>
                         </div>

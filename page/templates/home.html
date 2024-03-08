@@ -10,46 +10,49 @@
 </head>
 <style>
   body {
-      background-color: #11878b;
-      padding: 50px;
+    background-color: #11878b;
+    padding: 50px;
+    font-family: Arial, Helvetica, sans-serif; /* Moved font-family to body */
   }
-  
+
   form {
-      background-color: #ffffff;
-      padding: 40px;
-      border: 2px solid #be0202;
-      box-shadow: 0px 0px 10px rgba(154, 15, 15, 0.1);
-      max-width: 500px;
-      margin: 0 auto;
+    background-color: #ffffff;
+    padding: 40px;
+    border: 2px solid #be0202;
+    box-shadow: 0px 0px 10px rgba(154, 15, 15, 0.1);
+    max-width: 600px; /* Increased max-width for better spacing */
+    margin: 0 auto;
+    border-radius: 10px; /* Added border-radius for smoother corners */
   }
+
   .chip {
     display: inline-block;
-    padding: 0 25px;
+    padding: 10px 20px; /* Adjusted padding for better spacing */
     height: 50px;
     font-size: 16px;
-    line-height: 50px;
+    line-height: 30px; /* Adjusted line-height for better alignment */
     border-radius: 25px;
     background-color: #af2626;
+    color: #ffffff; /* Changed text color for better visibility */
+    margin-bottom: 20px; /* Added margin for better separation */
   }
-  
+
   .chip img {
     float: left;
-    margin: 0 10px 0 -25px;
+    margin-right: 10px; /* Adjusted margin for better spacing */
     height: 50px;
     width: 50px;
     border-radius: 50%;
   }
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  
+
   .flip-card {
-    background-color: transparent;
+    background-color: #ffffff; /* Changed background color */
     width: 300px;
     height: 300px;
     perspective: 1000px;
+    margin: 20px auto; /* Added margin for better centering */
   }
-  
+
   .flip-card-inner {
     position: relative;
     width: 100%;
@@ -57,30 +60,29 @@
     text-align: center;
     transition: transform 0.6s;
     transform-style: preserve-3d;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 10px; /* Added border-radius for smoother corners */
   }
-  
 
+  .collapsible {
+    color: #fff;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    background-color: #af2626; /* Changed background color */
+    border-radius: 5px; /* Added border-radius for smoother corners */
+    margin-top: 20px; /* Added margin for better spacing */
+  }
 
-    .collapsible {
-    
-      color: rgba(199, 13, 13, 0.419);
-      cursor: pointer;
-      padding: 18px;
-      width: 100%;
-      border: none;
-      outline: none;
-      font-size: 15px;
-    }
-    
-    
-    .content {
-      padding: 0 18px;
-      display: none;
-      overflow: hidden;
-      background-color: #4b0000;
-    }
-
+  .content {
+    padding: 0 18px;
+    overflow: hidden;
+    background-color: #4b0000;
+    border-radius: 5px; /* Added border-radius for smoother corners */
+  }
 </style>
 <body>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -117,12 +119,27 @@
           </div>
         </div>
         <div class="col-md-5">
-
           <div>
               <img src= '{{ field.images }}' alt="images"  class="img-fluid"style="width:100%; height:100%; border-radius: 7px;">
           </div>
-
       </div>
         {% endfor  %}
-          </body>
+        {% for comments in Comment %}
+        {% if comments.blog_id.blog_id == blog.blog_id %}
+        <div class="card-block px-6 ">
+            <div class="d-flex justify-content-between align-items-center font-bold"> 
+                <p class="mb-1">
+                    {{ comments.membersId }} <span class="small">{{ comments.commentDate }}</span>
+                </p>
+            </div>
+            <p class="small mb-0">
+              {{ comments.commentContent }}
+            </p>
+          </div>
+          {% endif %}
+        {% endfor %}
+
+        
+        
+</body> 
 </html>
