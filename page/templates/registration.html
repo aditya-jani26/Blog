@@ -55,32 +55,99 @@
 </head>
 <body>
     <div class="container">
-        <form action="{% url 'registration' %}" method="post">
+        <form class="form-card"  action="{% url 'registration' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <form style="width:300px; margin:0 auto; padding:20px; border:1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);">
                     <h2 style="text-align:center; margin-bottom:20px;">Sign Up</h2>
                     
                     <label style="display:block; margin-bottom:5px;">Name:</label>
-                    <input style="width:100%; padding:5px; margin-bottom:10px;" type="text" name="uName" required>
+                    <input style="width:100%; padding:5px; margin-bottom:10px;" type="text" name="uName" id="fname" required>
 
                     <label style="display:block; margin-bottom:5px;">Email:</label>
-                    <input style="width:100%; padding:5px; margin-bottom:10px;" type="email" name="uEmail" required>
+                    <input style="width:100%; padding:5px; margin-bottom:10px;" type="email" name="uEmail" id="uEmail"required>
 
                     <label style="display:block; margin-bottom:5px;">About:</label>
-                    <input style="width:100%; padding:5px; margin-bottom:10px;" type="text" name="about" required>
+                    <input style="width:100%; padding:5px; margin-bottom:10px;" type="text" name="about" id="about"required>
 
                     <label style="display:block; margin-bottom:5px;">Password:</label>
-                    <input style="width:100%; padding:5px; margin-bottom:10px;" type="password" name="uPass" required>
-
-                    <label style="display:block; margin-bottom:5px;">Image:</label>
-                    <input style="width:100%; padding:5px; margin-bottom:10px;" type="file" name="images" required>
+                    <input style="width:100%; padding:5px; margin-bottom:10px;" type="password" name="uPass" id="uPass"required>
+                    
+                    <div class="form-group col-12 flex-column d-flex"> <label class="form-control-label px-3">images<span id="ans"class="text-danger"> *</span></label> 
+                        <input type="file" id="ans" name="images" placeholder="" onblur="validate(6)" required> 
 
                     <button style="width:100%; padding:10px; background-color:#1dbd22; color:white; border:none; border-radius:5px; cursor:pointer;">Sign Up</button>
-                </form>
+               
         </form>
         <div class="login-link">
-            <button type="button" class="registration"><a href="{% url 'login' %}">login</a></button>
+            <button style="width:100%; padding:10px; background-color:#bdaa1d; color:rgb(11, 3, 3); border:none; border-radius:5px; cursor:pointer;"><a href="{% url 'login' %}">login</a></button>
         </div>
     </div>
+    <script>
+        function validate(val) {
+            v1 = document.getElementById("fname");
+            v2 = document.getElementById("uEmail");
+            v3 = document.getElementById("uPass");
+            v4 = document.getElementById("ans");
+
+        
+            flag1 = true;
+            flag2 = true;
+            flag3 = true;
+            flag4 = true;
+
+        
+            if(val>=1 || val==0) {
+                if(v1.value == "") {
+                    v1.style.borderColor = "red";
+                    flag1 = false;
+                }
+                else {
+                    v1.style.borderColor = "green";
+                    flag1 = true;
+                }
+            }
+        
+            if(val>=2 || val==0) {
+                if(v2.value == "") {
+                    v2.style.borderColor = "red";
+                    flag2 = false;
+                }
+                else {
+                    v2.style.borderColor = "green";
+                    flag2 = true;
+                }
+            }
+            if(val>=3 || val==0) {
+                if(v3.value == "") {
+                    v3.style.borderColor = "red";
+                    flag3 = false;
+                }
+                else {
+                    v3.style.borderColor = "green";
+                    flag3 = true;
+                }
+            }
+            if(val>=4 || val==0) {
+                if(v4.value == "") {
+                    v4.style.borderColor = "red";
+                    flag4 = false;
+                }
+                else {
+                    v4.style.borderColor = "green";
+                    flag4 = true;
+                }
+            }
+ 
+                else {
+                    v6.style.borderColor = "green";
+                    flag6 = true;
+                }
+            }
+        
+            flag = flag1 && flag2 && flag3 && flag4 ;
+        
+            return flag;
+          
+    </script>
 </body>
 </html>

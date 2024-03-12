@@ -132,14 +132,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = '/static/'
 MEDIA_URL = ''
 MEDIA_ROOT = os.path.join(BASE_DIR, 'page/images')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'page/profile')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+# SMTP
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"  
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-# EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = 'adiyudiz718@gmail.com ' 
-# EMAIL_HOST_PASSWORD = '6353yudiz592494hellO '
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_USE_SSL = False
+SENDGRID_API_KEY = "That you generate in sendgrid account"
+
+ADMINS = (
+    ("adiyudiz718", "adiyudiz718@gmail.com")
+)
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'adiyudiz718@gmail.com'
+EMAIL_HOST_PASSWORD = '6353yudiz592494hellO'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+

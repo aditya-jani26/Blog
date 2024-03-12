@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet" />
+    <title>changepassword</title>
+</head>
+<style>
+  body {
+    background-color: #11878b;
+    padding: 50px;
+    font-family: Arial, Helvetica, sans-serif; /* Moved font-family to body */
+  }
+
+  form {
+    background-color: #ffffff;
+    padding: 40px;
+    border: 2px solid #be0202;
+    box-shadow: 0px 0px 10px rgba(154, 15, 15, 0.1);
+    max-width: 600px; /* Increased max-width for better spacing */
+    margin: 0 auto;
+    border-radius: 10px; /* Added border-radius for smoother corners */
+  }
+
+  .chip {
+    display: inline-block;
+    padding: 10px 20px; /* Adjusted padding for better spacing */
+    height: 50px;
+    font-size: 16px;
+    line-height: 30px; /* Adjusted line-height for better alignment */
+    border-radius: 25px;
+    background-color: #af2626;
+    color: #ffffff; /* Changed text color for better visibility */
+    margin-bottom: 20px; /* Added margin for better separation */
+  }
+
+  .chip img {
+    float: left;
+    margin-right: 10px; /* Adjusted margin for better spacing */
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+  }
+
+  .flip-card {
+    background-color: #ffffff; /* Changed background color */
+    width: 300px;
+    height: 300px;
+    perspective: 1000px;
+    margin: 20px auto; /* Added margin for better centering */
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 10px; /* Added border-radius for smoother corners */
+  }
+
+  .collapsible {
+    color: #fff;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    background-color: #af2626; /* Changed background color */
+    border-radius: 5px; /* Added border-radius for smoother corners */
+    margin-top: 20px; /* Added margin for better spacing */
+  }
+
+  .content {
+    padding: 0 18px;
+    overflow: hidden;
+    background-color: #080692;
+    border-radius: 5px; /* Added border-radius for smoother corners */
+  }
+  img {
+
+    display: block;
+    margin: 0 auto;
+    width: 700px;
+    
+  }
+  
+</style>
+<body>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <img style="height:50px; width:50px;  border-radius: 60%;" src="https://logo.com/image-cdn/images/kts928pd/production/3d0a1942ea617825e187c3c9a3811a5d93a331be-370x366.png?w=1080&q=72" >
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link active" aria-current="page" href="{% url 'homepage' %}">Home</a>
+          <a class="nav-link" href="{% url 'myblog' %}">My blog</a>
+          <a class="nav-link" href="{% url 'addblog' %}">Add blog</a>
+          <a class="nav-link " href="{% url 'changepass' %}">Change Password</a>
+          <a class="nav-link" href="{% url 'logout' %}">logout</a>
+          <a href="{% url 'profile' %}">
+            <img src="/page/profile/download_3.jpeg" alt="profile" style="width:42px;height:42px;">
+            </a>
+        </div>
+      </div>
+      <div class="d-flex align-items-center">
+        {% for user in users %}
+          {% if user.userEmail == request.session.email %}
+            <a href="{% url 'profile' %}">
+              <img
+              src="{{ user.userImage }}"
+              class="rounded-circle"
+              height="45"
+              width="48"
+              alt="User Image"
+              loading="lazy"
+              />
+            </a>  
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </nav>
+
+    <section class="vh-100 gradient-custom">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+              <div class="card p-5">
+                <div class="card-body text-center">
+                    <form action="{% url 'changepass' %}" method="post">
+                        {% csrf_token %}
+                        <h2 class="mb-4">Change Your Password</h2>
+                        <div class="form-group mb-4"> 
+                            <input name="oldPass" type="password" class="form-control" placeholder="Enter Old Password" required>
+                        </div>
+                        <div class="form-group mb-4">
+                            <input name="newPass" type="password" class="form-control" placeholder="Enter New Password" required>
+                        </div>
+                        <div class="form-group mb-4">
+                            <input name="confirmPass" type="password" class="form-control" placeholder="Confirm New Password" required>
+                        </div>
+                        <button class="btn btn-primary btn-block" type="submit">
+                            Change Password
+                        </button>
+                    </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+</body>
+</html>
