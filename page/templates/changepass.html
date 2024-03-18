@@ -96,7 +96,7 @@
   
 </style>
 <body>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary"style="border-radius: 20px;">
     <div class="container-fluid">
       <img style="height:50px; width:50px;  border-radius: 60%;" src="https://logo.com/image-cdn/images/kts928pd/production/3d0a1942ea617825e187c3c9a3811a5d93a331be-370x366.png?w=1080&q=72" >
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -132,7 +132,6 @@
       </div>
     </div>
   </nav>
-
     <section class="vh-100 gradient-custom">
         <div class="container py-5 h-100">
           <div class="row d-flex justify-content-center align-items-center h-100">
@@ -141,6 +140,7 @@
                 <div class="card-body text-center">
                     <form action="{% url 'changepass' %}" method="post">
                         {% csrf_token %}
+                        {{message}}
                         <h2 class="mb-4">Change Your Password</h2>
                         <div class="form-group mb-4"> 
                             <input name="oldPass" type="password" class="form-control" placeholder="Enter Old Password" required>
