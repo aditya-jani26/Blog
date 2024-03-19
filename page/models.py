@@ -37,7 +37,6 @@ class Follow(models.Model):
     following = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
 class rating(models.Model):
     user = models.ForeignKey(members, on_delete=models.CASCADE)
     blogId = models.ForeignKey(blog, on_delete=models.CASCADE)
@@ -45,6 +44,6 @@ class rating(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(members, on_delete=models.CASCADE)
-    followers = models.ManyToManyField(members, related_name='following', blank=True)
+    another_user = models.ManyToManyField(members, related_name='another_user', blank=True)
 # =================================================================
 

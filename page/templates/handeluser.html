@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>handeluser</title>
+</head>
+<style>
+    .body 
+{
+    background-color: #11878b;
+    padding: 50px;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+    
+    .navbar {
+        background-color: #fff;
+    }
+</style>
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary"style="border-radius: 20px;">
+        <div class="container-fluid">
+          <img style="height:50px; width:50px;  border-radius: 60%;" src="https://logo.com/image-cdn/images/kts928pd/production/3d0a1942ea617825e187c3c9a3811a5d93a331be-370x366.png?w=1080&q=72" >
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-link active" aria-current="page" href="{% url 'homepage' %}">Home</a>
+              <a class="nav-link" href="{% url 'myblog' %}">My blog</a>
+              <a class="nav-link" href="{% url 'addblog' %}">Add blog</a>
+              <a class="nav-link " href="{% url 'changepass' %}">Change Password</a>
+              <a class="nav-link" href="{% url 'logout' %}">logout</a>
+              <a href="{% url 'profile' %}">
+                <img src="{{ request.user.profile.image.url }}" alt="profile" style="width:42px;height:42px;">
+                </a>
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            {% for user in members %}
+              {% if user.uEmail == request.session.email %}
+                <a href="{% url 'profile' %}">
+                  <img
+                  src="{{ user.images }}"
+                  class="rounded-circle"
+                  height="45"
+                  width="48"
+                  alt="User Image"
+                  loading="lazy"
+                  />
+                </a>  
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </nav>     
+    <section class="vh-100 gradient-custom">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-lg-9 col-xl-7 w-75 p-3">
+                    <div class="card rounded-3">
+                        <div class="card-body p-4">
+                            <h4 class="text-center my-3 pb-3">Authors</h4>
+                            <form class="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
+                                <div class="col-12">
+                                    <div>
+
+                                    </div>
+                                </div>
+                            </form>
+                            <table class="table mb-4">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">No.</th>
+                                        <th scope="col">User name</th>
+                                        <!-- <th scope="col">Email</th> -->
+                                        <th scope="col">About</th>  
+                                        <th scope="col">Action</th> 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in authors %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ user.userName }}</td>
+                                        <!-- <td>{{ user.userEmail }}</td> -->
+                                        <td>{{ user.userAbout }}</td>
+                                        <td>
+                                            {% if user.is_active == True %}
+                                            <button class="btn btn-danger" type="button" >
+                                                <a style="color: white;" href="{% url 'userDeactivate' user.membersId %}">Deactivate</a>
+                                            </button>
+                                            {% else %}
+                                            <button class="btn btn-primary" type="button" >
+                                                <a style="color: white;" href="{% url 'userActivate' user.membersId %}">Activate</a>
+                                            </button>
+                                            {% endif %}
+                                        </td>
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

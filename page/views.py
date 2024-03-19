@@ -121,7 +121,7 @@ def homepage(request):
         blogs = blog.objects.exclude(membersId=logged_in_user)
         comments = Comment.objects.all()
         ratings = rating.objects.all()
-        return render(request, 'homepage.html', {'blogs':blogs, 'comments':comments,'users':users,'ratings':ratings})
+        return render(request, 'homepage.html', {'blogs':blogs, 'comments':comments,'ratings':ratings,'users':users})
     else:
         return redirect('login')
 
@@ -149,21 +149,26 @@ def add_comment(request, pk):
     else:
         return redirect('login')
 # -= ===============rating==================================rating=============rating================================ 
+    # one errror (.update is not working yet; it is only creating new ratingalways)
 def ratings(request, pk):
     user_email = request.session.get('email')
     if user_email:
         if request.method == 'POST':
             
             ratingValue = request.POST.get('ratingValue')
-        
-            user_instance = members.objects.get(uEmail=user_email)
+
+            obj = members.objects.get(uEmail=request.session['email'])
+            user_instance =  get_object_or_404(user_email,membersId=obj.membersId)
             blog_instance = get_object_or_404(blog, blogId=pk)  
             if user_instance.uEmail != blog_instance.membersId.uEmail:
-              rating.objects.update_or_create(blogId=blog_instance, user=user_instance,ratingvalue=ratingValue)
+              rating.objects.update_or_create(blogId=blog_instance, membersId=user_instance,defaults={'ratingValue': ratingValue})
+
             return redirect('homepage')
     else:
         return redirect('login') 
 # ==========================================changePass======================changePass======================
+    # done
+    # This is use to change the password within the site page
 def changepass(request):
     user_email = request.session.get('email')
 
@@ -182,10 +187,10 @@ def changepass(request):
                     user.save()
                     return redirect('login')
                 else:
-                    message = "New Passwords do not match...!!!"
+                    message = "New Passwords do not match"
                     return render(request, "changePass.html", {'message':message})
             else:
-                message = "Old Passwords do not match...!!!"
+                message = "Old Passwords do not match"
                 return render(request, "changePass.html", {'message':message})
         users = members.objects.all()
         return render(request, 'changePass.html', {'users':users})
@@ -194,34 +199,81 @@ def changepass(request):
 
 # ====profile=========================================profile==============================================profile======
 # This is use to get profile of user and this will creatre profile page where the information of user will be available
-
+# this will show the profile of user who is logged in.
 def profile(request):
     user_email = request.session.get('email')
     if user_email:
         users = members.objects.filter(uEmail=user_email)
-        return render(request,"profile.html",{'users': users})
+        logged_in_user =  members.objects.filter(userEmail=user_email).first()
+        user = get_object_or_404(members, membersId=user)
+        user_profile = UserProfile.objects.get_or_create(user=user)
+        followers_count = user_profile.followers.count()
+        user_followings = UserProfile.objects.filter(followers=user)
+        avg_rating = rating.objects.filter(blog_id__user_id=user)
+        a=0
+        count = 0
+        for b in avg_rating:
+            a = a + b.ratingValue
+            count += 1 
+        if count != 0: 
+            c = a/count
+        else:
+            c=0
+        avg = round(c, 2)
+        followings = user_followings.count()
+        print('followings', followings)
+        return render(request, 'profile_detail.html', {'users': users, 'user_profile':user_profile, 'loggedUser':logged_in_user, 'followers_count':followers_count, 'avg':avg, 'followings':followings })
     else:
         return redirect('login')
 # =================================================================profile_details ====================================================
+    # this fuction is user to see whoes blog post is it and 
 def profile_details(request,membersId):
     user_email = request.session.get("email")
-    if user_email and request.method == "POST":
-        user_instance = get_object_or_404(members, uEmail=user_email)
-        action=request.POST.get("unfollow")
+    if user_email:
+        user = members.objects.filter(uEmail=user_email)
+        user_instance = members.objects.get(uEmail=user_email)
+        user_profile = get_object_or_404(UserProfile, user=user)
+        followers_count = user_profile.followers.count()
+        Logged_user_followings = UserProfile.objects.filter(followers=user)
+        avg_rating = rating.objects.filter(blog_id__user_id=user)
+        j=0
+        count = 0
+        for i in avg_rating:
+            j = j + i.ratingValue
+            count += 1 
+        if count != 0: 
+            x = j/count
+        else:
+            x=0
+        avg = round(x, 2)
+        followings = Logged_user_followings.count()
+        return render(request, 'profile.html', {'users': user_instance, 'followers_count':followers_count, 'avg':avg, 'followings':followings })
+    else:
+        return redirect('login')
+# ============================activate=====================================
+# activate and deactivate members
+    # @login_required
+def userDeactivate(request, id):
+    user = get_object_or_404(members, user_id=id)
+    user.is_active = False
+    user.save()
+    return redirect(handeuser)
 
-        return render(request,"profile_detail.html",{'user': user_instance})
-# ===============================-=-logout-=========================-logout-=======================-logout-=============
-# this will log out the user and delete the session
-def logout(request):
-    del request.session['email']
-    return render(request, 'login.html')
+# =================================================================
+
+def userActivate(request, id):
+    user = get_object_or_404(members, user_id=id)
+    user.is_active = True
+    user.save()
+    return redirect(handeuser)
+
 # =================================================================following =================================================================
 def following(request, membersId):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:
         user_to_follow = get_object_or_404(members, membersId=membersId)
         following_user = get_object_or_404(members, uEmail=user_email)
-        user_profile, _ = UserProfile.objects.get_or_create(user=user_to_follow)
+        user_profile = UserProfile.objects.get_or_create(user=user_to_follow)
         user_profile.followers.add(following_user)
         return redirect('profile_details', membersId=membersId)
     else:
@@ -234,9 +286,37 @@ def unfollow(request, membersId):
     if request.method == 'POST' and user_email:
         user_to_unfollow = get_object_or_404(members, membersId=membersId)
         following_user = get_object_or_404(members, userEmail=user_email)
-        user_profile, _ = UserProfile.objects.get_or_create(user=user_to_unfollow)
+        user_profile= UserProfile.objects.get_or_create(user=user_to_unfollow)
         user_profile.followers.remove(following_user)
         return redirect('profile_detail', membersId=membersId)
     else:
         return redirect('login')
-# ================================================================= =================================================================
+# =================================================================
+def admindash(request):
+    user_email = request.session.get('email')
+    if user_email:  
+        blogs = blog.objects.all()
+        comments = Comment.objects.all()
+        return render(request, 'adminDash.html',{'blogs':blogs, 'comments':comments})
+    else:
+        return redirect('login')
+# @login_required
+def handeuser(request):
+    user_email = request.session.get('email')
+    if user_email:
+        authors = members.objects.all()
+        return render(request, 'handeluser.html',{'authors': authors})
+    else:
+        return redirect('login')
+# =================================================================
+def author_profiles(request):
+    user=request.session.get('user')
+    if user:
+        authors = members.objects.all()
+        return render(request, 'author_profiles.html',{'authors': authors})
+# ===============================-=-logout-=========================-logout-=======================-logout-=============
+# this will log out the user and delete the session
+def logout(request):
+    del request.session['email']
+    return render(request, 'login.html')
+# =================================================================

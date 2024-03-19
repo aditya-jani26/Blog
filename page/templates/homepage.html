@@ -9,6 +9,7 @@
    </title>
 </head>
 <style>
+  
   body {
     background-color: #11878b;
     padding: 50px;
@@ -146,7 +147,7 @@
           <a class="nav-link" href="{% url 'logout' %}">logout</a>
           <a href="{% url 'profile' %}">
             <img src="{{ request.user.profile.image.url }}" alt="profile" style="width:42px;height:42px;">
-            </a>
+          </a>
         </div>
       </div>
       <div class="d-flex align-items-center">
@@ -184,7 +185,7 @@
             <p class="card-text">
               {{field.description}}
             </p>
-          </div>
+            </div>
                <form method="POST"action="{% url 'add_comment' pk=field.blogId %}">
                  {% csrf_token%}
                  <div class="comment">
@@ -198,79 +199,79 @@
                   <img src= '{{ field.images }}' alt="images"  class="img-fluid"style="width: 590px; height:20px border-radius: 15px;">
                 </div>
               </div>
-            </div>
-            <div class="comments col-md-10 px-5 row d-flex justify-content-center align-items-center h-100">
-              <form method="POST">
-             {% for comment in comments %}
-             {% if comment.blog_id.blogId == field.blogId %}
-               <div class="comment">
            
-                <p> {{comment.membersId}}:->  {{ comment.commentDate }} </p>
-                 <p>{{ comment.commentContent }}</p>
-               </div>
-               {% endif %}
-             {% endfor %}
-              </form>
-             <form method="POST" action="{% url 'ratings' pk=field.blogId %}">
-              {% csrf_token%}
+            <script>	
+              jQuery(document).ready(function($){
 
-             <div class="rate">
-               <input type="submit" id="star5" name="ratingValue" value="5" />
-               <label for="star5" title="text">5 stars</label>
-               <input type="submit" id="star4" name="ratingValue" value="4" />
-               <label for="star4" title="text">4 stars</label>
-               <input type="submit" id="star3" name="ratingValue" value="3" />
-               <label for="star3" title="text">3 stars</label>
-               <input type="submit" id="star2" name="ratingValue" value="2" />
-               <label for="star2" title="text">2 stars</label>
-               <input type="submit" id="star1" name="ratingValue" value="1" />
-               <label for="star1" title="text">1 star</label>
-              </form>
-              <script>	
-                jQuery(document).ready(function($){
-  
-                $(".btnrating").on('click',(function(e) {
+              $(".btnrating").on('click',(function(e) {
+              
+              var previous_value = $("#selected_rating").val();
+              
+              var selected_value = $(this).attr("data-attr");
+              $("#selected_rating").val(selected_value);
+              
+              $(".selected-rating").empty();
+              $(".selected-rating").html(selected_value);
+              
+              for (i = 1; i <= selected_value; ++i) {
+              $("#rating-star-"+i).toggleClass('btn-warning');
+              $("#rating-star-"+i).toggleClass('btn-default');
+              }
+              
+              for (ix = 1; ix <= previous_value; ++ix) {
+              $("#rating-star-"+ix).toggleClass('btn-warning');
+              $("#rating-star-"+ix).toggleClass('btn-default');
+              }
+      
+              }));
                 
-                var previous_value = $("#selected_rating").val();
-                
-                var selected_value = $(this).attr("data-attr");
-                $("#selected_rating").val(selected_value);
-                
-                $(".selected-rating").empty();
-                $(".selected-rating").html(selected_value);
-                
-                for (i = 1; i <= selected_value; ++i) {
-                $("#rating-star-"+i).toggleClass('btn-warning');
-                $("#rating-star-"+i).toggleClass('btn-default');
-                }
-                
-                for (ix = 1; ix <= previous_value; ++ix) {
-                $("#rating-star-"+ix).toggleClass('btn-warning');
-                $("#rating-star-"+ix).toggleClass('btn-default');
-                }
-        
-                }));
-                  
-              });
-              </script>
-              {% for rating in ratings %}
-              {% if rating.blogId.blogId == blog.blogId %}
-              <div class="card-block px-6 ">
-                <div class="d-flex justify-content-between align-items-center font-bold">
-                    <h6 class="mb-1">
-                      {{ rating.user.uName }}
-                    </h6>
-                    <p class="mb-1">
-                        {{ rating.ratingvalue }}
-                    </p>
-                </div>  
-              </div>
-              {% endif %}
-              {% endfor %}
-             </div>   
-             </div>
+            });
+            </script>
+            <div class="comments col-md-10 px-5 row d-flex justify-content-center align-items-center h-100">
+                  <form method="POST">
+                {% for comment in comments %}
+                {% if comment.blog_id.blogId == field.blogId %}
+                  <div class="comment">
+              
+                    <p> {{comment.membersId}}:->  {{ comment.commentDate }} </p>
+                    <p>{{ comment.commentContent }}</p>
+                  </div>
+                  {% endif %}
+                {% endfor %}
+                  </form>
+                <form method="POST" action="{% url 'ratings' pk=field.blogId %}">
+                  {% csrf_token%}
+
+                <div class="rate">
+                  <input type="submit" id="star5" name="ratingValue" value="5" />
+                  <label for="star5" title="text">5 stars</label>
+                  <input type="submit" id="star4" name="ratingValue" value="4" />
+                  <label for="star4" title="text">4 stars</label>
+                  <input type="submit" id="star3" name="ratingValue" value="3" />
+                  <label for="star3" title="text">3 stars</label>
+                  <input type="submit" id="star2" name="ratingValue" value="2" />
+                  <label for="star2" title="text">2 stars</label>
+                  <input type="submit" id="star1" name="ratingValue" value="1" />
+                  <label for="star1" title="text">1 star</label>
+                  </form>
+
+                  {% for rating in ratings %}
+                  {% if rating.user.blogId == blog.blogId %}
+                  <div class="card-block px-6 ">
+                    <div class="rating " >
+                        <p class="mb-1">
+                          {{ rating.user.uName }}
+                          {{ rating.ratingvalue }}
+                        </p>
+                    </div>  
+                  </div>
+                  {% endif %}
+                  {% endfor %}
+            </div>   
+            
           </div>
         </div>
+      </div>
       {% endfor %}     
 </body> 
 </html>
