@@ -92,57 +92,63 @@
     </div>
   </nav> 
       
-      <section class="vh-50" style="background-color:gradient-custom">
-        {% for user in user %}
-    
-            <div class="container py-5 h-100">
-              <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col col-md-9 col-lg-7 col-xl-5">
-                  <div class="card" style="border-radius: 15px;">
-                    <div class="card-body p-4">
-                      <div class="d-flex text-black">
-                        <div class="col-md-5">
-                          <div>
-                              <img src= '{{ user.images }}' alt="images"  class="img-fluid"style="width:100%; height:100%; border-radius: 7px;">
-                          </div>
-                        <div class="flex-grow-1 ms-3">
-                          <h2 class="mb-1">{{ user.uName }}</h2>
-                          <p class="mb-2 pb-1" style="color: #2b2a2a;">{{ user.uabout }}</p>
-                          </div>
-                          <div class="d-flex justify-content-start " >  
-                            <div>
-                              <p class="small text-muted mb-1">Following</p>
-                              <p class="mb-0">{{ user.Following }}1</p>
-                            </div>
-                            <div class="px-3">
-                              <p class="small text-muted mb-1">Followers</p>
-                              <p class="mb-0">{{ user.Followers }}1</p>
-                            </div>
-                            <div>
-                              <p class="small text-muted mb-1">Rating</p>
-                              <p class="mb-0">{{ user.Rating }}4</p>
-                            </div>
+  <section class="vh-100" style="background-color:gradient-custom">
+    {% for user in user %}
+
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col col-md-9 col-lg-7 col-xl-5">
+              <div class="card" style="border-radius: 15px;">
+                <div class="card-body p-4">
+                  <div class="d-flex text-black">
+                    <div class="flex-shrink-0">
+                      <img src="{{ user.images }}"
+                        alt="Generic placeholder image" class="img-fluid"
+                        style="width: 180px; border-radius: 10px;">
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h2 class="mb-1">{{ user.uName }}</h2>
+                      <p class="mb-2 pb-1" style="color: #2b2a2a;">{{ user.abour }}</p>
+                      <div class="d-flex justify-content-start rounded-3 p-2 mb-2"
+                        style="background-color: #efefef;">
+                        <div>
+                          <p class="small text-muted mb-1">Following</p>
+                          <p class="mb-0">{{ followings }}</p>
                         </div>
-                          <div class="d-flex pt-1">
-                              {% if user_profile and user in following %}
-                              <form action="{% url 'unfollow' user.membersId %}" method="post">
-                                  {% csrf_token %}
-                                  <button type="submit" name="unfollow" class="btn btn-danger">Unfollow</button>
-                              </form>
-                              {% else %}
-                              <form action="{% url 'following' user.membersId %}" method="post">
-                                  {% csrf_token %}
-                                  <button type="submit" name="Follow" class="btn btn-primary">Follow</button> 
-                              </form>
-                              {% endif %}
-                          </div>
+                        <div class="px-3">
+                          <p class="small text-muted mb-1">Followers</p>
+                          <p class="mb-0">{{ followers_count }}</p>
                         </div>
+                        <div>
+                          <p class="small text-muted mb-1">Rating</p>
+                          <p class="mb-0">5</p>
+                        </div>
+                      </div>
+                      <div class="d-flex pt-1">
+                        {% if loggedUser in user_profile.followers.all %}
+                            <form action="{% url 'unfollow' user.membersId %}" method="post">
+                            {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">Unfollow</button>
+                            </form>                       
+                        {% else %}
+                            <form action="{% url 'following' user.membersId %}" method="post">
+                            {% csrf_token %}
+                              {{user.user_profile.followers.all}}
+                              <button type="submit" class="btn btn-primary">Follow</button>
+                            </form> 
+                        {% endif %}
+                        <!-- <button type="button" class="btn btn-primary flex-grow-1">Follow</button> -->
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-        {% endfor %}  
+          </div>
+        </div>
+
+    {% endfor %}
+
+ </section>
 </body>
 </html>

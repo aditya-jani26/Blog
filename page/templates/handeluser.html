@@ -61,13 +61,6 @@
                     <div class="card rounded-3">
                         <div class="card-body p-4">
                             <h4 class="text-center my-3 pb-3">Authors</h4>
-                            <form class="row row-cols-lg-auto g-3 justify-content-center align-items-center mb-4 pb-2">
-                                <div class="col-12">
-                                    <div>
-
-                                    </div>
-                                </div>
-                            </form>
                             <table class="table mb-4">
                                 <thead>
                                     <tr>
@@ -82,9 +75,9 @@
                                     {% for user in authors %}
                                     <tr>
                                         <td>{{ forloop.counter }}</td>
-                                        <td>{{ user.userName }}</td>
-                                        <!-- <td>{{ user.userEmail }}</td> -->
-                                        <td>{{ user.userAbout }}</td>
+                                        <td>{{ user.uName }}</td>
+                                        <!-- <td>{{ user.uEmail }}</td> -->
+                                        <td>{{ user.about }}</td>
                                         <td>
                                             {% if user.is_active == True %}
                                             <button class="btn btn-danger" type="button" >
@@ -95,8 +88,7 @@
                                                 <a style="color: white;" href="{% url 'userActivate' user.membersId %}">Activate</a>
                                             </button>
                                             {% endif %}
-                                        </td>
-                                        
+                                        </td>  
                                     </tr>
                                     {% endfor %}
                                 </tbody>

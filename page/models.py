@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
-# from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 
 class members(models.Model):
     membersId = models.AutoField(primary_key=True, unique=True)
@@ -23,7 +23,8 @@ class blog(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=500)
     images = models.ImageField(upload_to='images/')
-
+    def __str__(self):
+        return self.title
 class Comment(models.Model):
     membersId = models.ForeignKey(members, on_delete=models.CASCADE, null=True)
     blog_id = models.ForeignKey(blog, on_delete=models.CASCADE, null=True)
@@ -33,8 +34,8 @@ class Comment(models.Model):
 
 
 class Follow(models.Model):
-    follower = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
-    following = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
+    follower = models.ForeignKey(members, related_name='following', on_delete=models.CASCADE)
+    following = models.ForeignKey(members, related_name='followers', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class rating(models.Model):
@@ -44,6 +45,6 @@ class rating(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(members, on_delete=models.CASCADE)
-    another_user = models.ManyToManyField(members, related_name='another_user', blank=True)
+    another_user = models.ManyToManyField(members, related_name='another_user', blank=True) 
 # =================================================================
 

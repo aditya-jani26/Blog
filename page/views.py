@@ -203,104 +203,108 @@ def changepass(request):
 def profile(request):
     user_email = request.session.get('email')
     if user_email:
+
         users = members.objects.filter(uEmail=user_email)
-        logged_in_user =  members.objects.filter(userEmail=user_email).first()
-        user = get_object_or_404(members, membersId=user)
-        user_profile = UserProfile.objects.get_or_create(user=user)
-        followers_count = user_profile.followers.count()
-        user_followings = UserProfile.objects.filter(followers=user)
-        avg_rating = rating.objects.filter(blog_id__user_id=user)
-        a=0
-        count = 0
-        for b in avg_rating:
-            a = a + b.ratingValue
-            count += 1 
-        if count != 0: 
-            c = a/count
-        else:
-            c=0
-        avg = round(c, 2)
-        followings = user_followings.count()
-        print('followings', followings)
-        return render(request, 'profile_detail.html', {'users': users, 'user_profile':user_profile, 'loggedUser':logged_in_user, 'followers_count':followers_count, 'avg':avg, 'followings':followings })
+        # This is used to see the crrent user is varified user or not (logedin with password)
+        user = get_object_or_404(members, uEmail=user_email)
+        #This is used to check if the user is another user is in members table list (is present in the user table)
+        user_profile = get_object_or_404(UserProfile, user=user)
+        # this will create the profile if not present in the user table
+        followers_count = UserProfile.objects.count()
+        # this will use inbuild function which is .counter method
+        Logged_user_following = UserProfile.objects.filter(another_user__another_user__user_id=user)
+        # user_followings = UserProfile.objects.filter(blogId__membersId=user)
+        #this user_followings will be user .filter to filter followers from member table
+        followings = Logged_user_following.count()
+        # This followings is useing .count method ro count total number of following 
+        # this print is used to check if the followings has any value in it or not.
+        return render(request, 'profile_detail.html', {'user': users, 'user_profile':user_profile, 'loggedUser':Logged_user_following , 'followers_count':followers_count,'followings':followings })
     else:
         return redirect('login')
 # =================================================================profile_details ====================================================
     # this fuction is user to see whoes blog post is it and 
-def profile_details(request,membersId):
+def profile_details(request):
     user_email = request.session.get("email")
     if user_email:
+        # if the email is in session then this will move forward
         user = members.objects.filter(uEmail=user_email)
+        # this wil store " .filter output " from member table of the session this user has (loged in user)
         user_instance = members.objects.get(uEmail=user_email)
+        # this will " .get the value from members table " and store it in user_instance
         user_profile = get_object_or_404(UserProfile, user=user)
+        # this will see if user from member table and this user is in this model table ot not -> if not it will show that in model this is not present
         followers_count = user_profile.followers.count()
+        # followers_count this will use " .count " method and count user profile and store it in followers_count 
         Logged_user_followings = UserProfile.objects.filter(followers=user)
-        avg_rating = rating.objects.filter(blog_id__user_id=user)
-        j=0
-        count = 0
-        for i in avg_rating:
-            j = j + i.ratingValue
-            count += 1 
-        if count != 0: 
-            x = j/count
-        else:
-            x=0
-        avg = round(x, 2)
+        # with the help of " .filter " method it will go in this UserProfile table and try to get value of session user Logged_user_followings
         followings = Logged_user_followings.count()
-        return render(request, 'profile.html', {'users': user_instance, 'followers_count':followers_count, 'avg':avg, 'followings':followings })
+        # then simply this will use" .count method "and store total number of Logged_user_followings 
+        return render(request, 'profile.html', {'users': user_instance, 'followers_count':followers_count,'followings':followings })
     else:
         return redirect('login')
-# ============================activate=====================================
-# activate and deactivate members
-    # @login_required
-def userDeactivate(request, id):
-    user = get_object_or_404(members, user_id=id)
-    user.is_active = False
-    user.save()
-    return redirect(handeuser)
-
-# =================================================================
-
-def userActivate(request, id):
-    user = get_object_or_404(members, user_id=id)
-    user.is_active = True
-    user.save()
-    return redirect(handeuser)
-
 # =================================================================following =================================================================
 def following(request, membersId):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:
         user_to_follow = get_object_or_404(members, membersId=membersId)
+        # this variable is used to keep track of user is  folowed or not if not then it will create and save it in this variable
         following_user = get_object_or_404(members, uEmail=user_email)
+        # this variable  is user to check if the following_user is a following the user(logedin user or not )
         user_profile = UserProfile.objects.get_or_create(user=user_to_follow)
+        # this use get or create method in this case if the user is folowing the outher account then it will get or it will create a new account
         user_profile.followers.add(following_user)
+        # after creating or getting the user the above value of user_profile will add with .add method in case number 2 that id following_user.
         return redirect('profile_details', membersId=membersId)
     else:
         return redirect('login')
 
-# =================================================================unfollow =================================================================
+# # =================================================================unfollow =================================================================
     
 def unfollow(request, membersId):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:
         user_to_unfollow = get_object_or_404(members, membersId=membersId)
+
         following_user = get_object_or_404(members, userEmail=user_email)
+
         user_profile= UserProfile.objects.get_or_create(user=user_to_unfollow)
+        # this varibale will user_profile get or create the vaue if the user is in user_to_unfollow, if not then it will create and store it in this user_to_unfollow
         user_profile.followers.remove(following_user)
+        #  user_profile is useing .remove method to remove and the store it in following_user which will show the user.
         return redirect('profile_detail', membersId=membersId)
     else:
         return redirect('login')
+
+# =================================================================================================
+# ============================activate=====================================
+# activate and deactivate members
+@login_required
+def userDeactivate(request, id):
+    user = get_object_or_404(members, user_id=id)
+    user.is_active = False
+    # this is useing .is_active method see if that value is False ()
+    user.save()
+    return redirect(handeuser)
+
+# =================================================================
+@login_required
+def userActivate(request, id):
+    user = get_object_or_404(members, user_id=id)
+    user.is_active = True
+    # this is using .is_active method and see this value of user(member) value with this method is coming true or not.
+    user.save()
+    return redirect(handeuser)
 # =================================================================
 def admindash(request):
     user_email = request.session.get('email')
     if user_email:  
         blogs = blog.objects.all()
         comments = Comment.objects.all()
-        return render(request, 'adminDash.html',{'blogs':blogs, 'comments':comments})
+        return render(request, 'admindash.html',{'blogs':blogs, 'comments':comments})
     else:
         return redirect('login')
-# @login_required
+#==============================handeuser======================================== 
+@login_required
 def handeuser(request):
     user_email = request.session.get('email')
     if user_email:
@@ -310,7 +314,7 @@ def handeuser(request):
         return redirect('login')
 # =================================================================
 def author_profiles(request):
-    user=request.session.get('user')
+    user=request.session.get('email')
     if user:
         authors = members.objects.all()
         return render(request, 'author_profiles.html',{'authors': authors})
