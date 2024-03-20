@@ -55,7 +55,7 @@ def login(request):
         except Exception as e:
             loginUser = None
         user = request.user
-        print("User",user)
+        # print("User",user)
         if members.objects.filter(uEmail=uEmail).exists() and check_password(uPass, loginUser.uPass):  
             request.session['email'] = uEmail
             return redirect('homepage')
@@ -157,12 +157,18 @@ def ratings(request, pk):
             
             ratingValue = request.POST.get('ratingValue')
 
-            obj = members.objects.get(uEmail=request.session['email'])
-            user_instance =  get_object_or_404(user_email,membersId=obj.membersId)
-            blog_instance = get_object_or_404(blog, blogId=pk)  
-            if user_instance.uEmail != blog_instance.membersId.uEmail:
-              rating.objects.update_or_create(blogId=blog_instance, membersId=user_instance,defaults={'ratingValue': ratingValue})
+            print("rating value",ratingValue)
 
+            obj = members.objects.get(uEmail=request.session['email'])  
+            print("user obj",obj)
+            user_instance =  get_object_or_404(members,membersId=obj.membersId)
+            print("user user_instance",user_instance)
+
+            blog_instance = get_object_or_404(blog, blogId=pk)
+            print("user blog_instance",blog_instance)
+
+            if user_instance.uEmail != blog_instance.membersId.uEmail:
+              rating.objects.update_or_create(blogId=blog_instance, user_id=user_instance,defaults={'ratingValue': ratingValue})
             return redirect('homepage')
     else:
         return redirect('login') 
@@ -205,20 +211,25 @@ def profile(request):
     if user_email:
 
         users = members.objects.filter(uEmail=user_email)
+        print("users:" % users)
         # This is used to see the crrent user is varified user or not (logedin with password)
         user = get_object_or_404(members, uEmail=user_email)
+        print("user", user)
         #This is used to check if the user is another user is in members table list (is present in the user table)
         user_profile = get_object_or_404(UserProfile, user=user)
+        print("user_profile", user_profile)
         # this will create the profile if not present in the user table
         followers_count = UserProfile.objects.count()
+        print("followers_count",followers_count)
         # this will use inbuild function which is .counter method
         Logged_user_following = UserProfile.objects.filter(another_user__another_user__user_id=user)
+        print("Logged_user_following",Logged_user_following)
         # user_followings = UserProfile.objects.filter(blogId__membersId=user)
         #this user_followings will be user .filter to filter followers from member table
         followings = Logged_user_following.count()
+        print("followings",followings)
         # This followings is useing .count method ro count total number of following 
-        # this print is used to check if the followings has any value in it or not.
-        return render(request, 'profile_detail.html', {'user': users, 'user_profile':user_profile, 'loggedUser':Logged_user_following , 'followers_count':followers_count,'followings':followings })
+        return render(request, 'profile.html', {'user': users, 'user_profile':user_profile, 'loggedUser':Logged_user_following , 'followers_count':followers_count,'followings':followings })
     else:
         return redirect('login')
 # =================================================================profile_details ====================================================
@@ -226,20 +237,13 @@ def profile(request):
 def profile_details(request):
     user_email = request.session.get("email")
     if user_email:
-        # if the email is in session then this will move forward
-        user = members.objects.filter(uEmail=user_email)
-        # this wil store " .filter output " from member table of the session this user has (loged in user)
-        user_instance = members.objects.get(uEmail=user_email)
-        # this will " .get the value from members table " and store it in user_instance
-        user_profile = get_object_or_404(UserProfile, user=user)
-        # this will see if user from member table and this user is in this model table ot not -> if not it will show that in model this is not present
+        users = members.objects.filter(uEmail=user_email)
+        loggedUser = members.objects.filter(uEmail=user_email).first()
+        user = get_object_or_404(members, uEmail=user_email)  
+        user_profile = UserProfile.objects.get_or_create(user=user)
         followers_count = user_profile.followers.count()
-        # followers_count this will use " .count " method and count user profile and store it in followers_count 
-        Logged_user_followings = UserProfile.objects.filter(followers=user)
-        # with the help of " .filter " method it will go in this UserProfile table and try to get value of session user Logged_user_followings
-        followings = Logged_user_followings.count()
-        # then simply this will use" .count method "and store total number of Logged_user_followings 
-        return render(request, 'profile.html', {'users': user_instance, 'followers_count':followers_count,'followings':followings })
+        user_followings = UserProfile.objects.filter(followers=user)
+        return render(request, 'profile_detail.html', {'users': users, 'user_profile':user_profile,'loggedUser':loggedUser,'followers_count':followers_count,'user_followings':user_followings })
     else:
         return redirect('login')
 # =================================================================following =================================================================
@@ -274,7 +278,6 @@ def unfollow(request, membersId):
         return redirect('profile_detail', membersId=membersId)
     else:
         return redirect('login')
-
 # =================================================================================================
 # ============================activate=====================================
 # activate and deactivate members

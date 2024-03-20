@@ -22,9 +22,8 @@ class blog(models.Model):
     time = models.TimeField(null=True)
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=500)
-    images = models.ImageField(upload_to='images/')
-    def __str__(self):
-        return self.title
+    images = models.ImageField(upload_to='images/') 
+    
 class Comment(models.Model):
     membersId = models.ForeignKey(members, on_delete=models.CASCADE, null=True)
     blog_id = models.ForeignKey(blog, on_delete=models.CASCADE, null=True)

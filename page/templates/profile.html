@@ -90,7 +90,7 @@
   </nav> 
         <!-- Profile -->
         <section class="vh-10" style="background-color:gradient-custom ">
-          {% for user in members %}
+          {% for user in users %}
               <div class="container py-5 h-10">
                 <div class="row d-flex justify-content-center align-items-center h-100">
                   <div class="col col-md-9 col-lg-7 col-xl-5">
@@ -136,7 +136,7 @@
                                     </button>
                                     {% endif %}
                                 </form>
-                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -145,7 +145,7 @@
                   </div>
                 </div>
               </div>
-        </section>
-        {% endfor %}
+              {% endfor %}
+            </section>
 </body>
 </html>
