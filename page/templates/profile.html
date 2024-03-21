@@ -109,15 +109,15 @@
                             <div class="h-100 d-flex align-items-center justify-content-centert " >
                                 <div>
                                   <p class="small text-muted mb-1">Following</p>
-                                  <p class="mb-0">2</p>
+                                  <p class="mb-0">{{ following }}1</p>
                                 </div>
                                 <div class="px-3">
                                   <p class="small text-muted mb-1">Followers</p>
-                                  <p class="mb-0">2</p>
+                                  <p class="mb-0">{{ follower }}1</p>
                                 </div>
                                 <div>
                                   <p class="small text-muted mb-1">Rating</p>
-                                  <p class="mb-0">2</p>
+                                  <p class="mb-0">{{ user.ratingvalue }}</p>
                                 </div>
                             </div>
                             <div class="d-flex pt-1">
@@ -125,8 +125,8 @@
                               <div style="background:white;">
                                 <form action="/follow" method="POST">
                                     {% csrf_token %}  {% if user != user_profile.user %}
-                                    <input type="hidden" value="{{user.uName}}" name="follower" />
-                                    <input type="hidden" value="{{user_object.uName}}" name="user" />
+                                    <input type="hidden" value="{{user.uName}}" name="followers" />
+                                    <input type="hidden" value="{{user_object.uName}}"name="user" />
 
                                     <button type="submit" class="btn btn-outline-dark"
                                         data-mdb-ripple-color="dark" style="z-index: 1; margin: 5px;"

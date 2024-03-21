@@ -1,7 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.timezone import now
-from django.contrib.auth import get_user_model
+
 
 class members(models.Model):
     membersId = models.AutoField(primary_key=True, unique=True)
@@ -33,17 +32,17 @@ class Comment(models.Model):
 
 
 class Follow(models.Model):
-    follower = models.ForeignKey(members, related_name='following', on_delete=models.CASCADE)
-    following = models.ForeignKey(members, related_name='followers', on_delete=models.CASCADE)
+    follower = models.ForeignKey(members, related_name='following_relationships', on_delete=models.CASCADE)
+    following = models.ForeignKey(members, related_name='followers_relationships', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class rating(models.Model):
     user = models.ForeignKey(members, on_delete=models.CASCADE)
     blogId = models.ForeignKey(blog, on_delete=models.CASCADE)
-    ratingvalue = models.IntegerField(default=0)
-
+    ratingvalue = models.IntegerField(default=0,null = True, blank=True)
+    
 class UserProfile(models.Model):
     user = models.OneToOneField(members, on_delete=models.CASCADE)
-    another_user = models.ManyToManyField(members, related_name='another_user', blank=True) 
+    following = models.ManyToManyField(members, related_name='followers', symmetrical=False)
 # =================================================================
 

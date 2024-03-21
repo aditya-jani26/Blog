@@ -175,11 +175,11 @@
       <div class="row">
         <div class="col-md-5 px-7">
           <div class="card-block px-6">
-            <form action="{% url 'profile_details'  field.membersId.membersId %}" method="post">
+            <form action="{% url 'profile_detail'  field.membersId.membersId %}" method="post">
               {% csrf_token %}
               <button type="submit" class="btn"><h6>About</h6></button>
             </form>
-            <p class="card-text">{{ field.date }} {{ field.time }}</p>
+            <p class="card-text">{{ field.date }} {{ field.time }}</p>  
             <!-- <i class="fa fa-quote-left text-black"></i> -->
             <h4 class="card-title">{{field.title}}</h4>
             <p class="card-text">
@@ -192,14 +192,14 @@
                  <textarea name="commentContent" placeholder="Your Comment" type="text" required></textarea>
                  <button type="submit">Add Comment</button>
                 </form>
-              </div>
+                </div>
             </div>
               <div class="col-md-6 row d-flex justify-content-center">
                 <div>
                   <img src= '{{ field.images }}' alt="images"  class="img-fluid"style="width: 590px; height:20px border-radius: 15px;">
                 </div>
               </div>
-           
+              </div>  
             <script>	
               jQuery(document).ready(function($){
 
@@ -232,7 +232,6 @@
                 {% for comment in comments %}
                 {% if comment.blog_id.blogId == field.blogId %}
                   <div class="comment">
-              
                     <p> {{comment.membersId}}:->  {{ comment.commentDate }} </p>
                     <p>{{ comment.commentContent }}</p>
                   </div>
@@ -268,10 +267,10 @@
                   {% endif %}
                   {% endfor %}
             </div>   
-            
           </div>
         </div>
       </div>
+    </div>
       {% endfor %}     
 </body> 
 </html>

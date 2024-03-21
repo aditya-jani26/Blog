@@ -22,8 +22,7 @@ class ratingModelAdmin(admin.ModelAdmin):
     list_display = ["ratingvalue"]
 admin.site.register(rating, ratingModelAdmin)
 
-class UserProfileModelAdmin(admin.ModelAdmin):
-    list_display = ["user"]
-admin.site.register(UserProfile, UserProfileModelAdmin)
+admin.site.register(UserProfile)
+
 
 # Register your models here.

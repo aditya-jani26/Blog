@@ -151,10 +151,3 @@ EMAIL_HOST_USER = 'adiyudiz718@gmail.com'
 EMAIL_HOST_PASSWORD = '6353yudiz592494hellO'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_POST = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = os.environ.get('traces_email')
-# EMAIL_HOST_PASSWORD = os.environ.get('traces_email_password')

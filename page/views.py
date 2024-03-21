@@ -1,10 +1,12 @@
 import datetime
+import django
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password,make_password
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
+
 
 # from django.urls import reverse_lazy
 # from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView
@@ -155,9 +157,9 @@ def ratings(request, pk):
     if user_email:
         if request.method == 'POST':
             
-            ratingValue = request.POST.get('ratingValue')
+            ratingvalue = request.POST.get('ratingvalue')
 
-            print("rating value",ratingValue)
+            print("rating value",ratingvalue)
 
             obj = members.objects.get(uEmail=request.session['email'])  
             print("user obj",obj)
@@ -168,7 +170,7 @@ def ratings(request, pk):
             print("user blog_instance",blog_instance)
 
             if user_instance.uEmail != blog_instance.membersId.uEmail:
-              rating.objects.update_or_create(blogId=blog_instance, user_id=user_instance,defaults={'ratingValue': ratingValue})
+              rating.objects.update_or_create(blogId=blog_instance, user=user_instance, defaults={'ratingvalue': ratingvalue})
             return redirect('homepage')
     else:
         return redirect('login') 
@@ -206,78 +208,57 @@ def changepass(request):
 # ====profile=========================================profile==============================================profile======
 # This is use to get profile of user and this will creatre profile page where the information of user will be available
 # this will show the profile of user who is logged in.
+
+
 def profile(request):
     user_email = request.session.get('email')
     if user_email:
-
         users = members.objects.filter(uEmail=user_email)
-        print("users:" % users)
-        # This is used to see the crrent user is varified user or not (logedin with password)
         user = get_object_or_404(members, uEmail=user_email)
-        print("user", user)
-        #This is used to check if the user is another user is in members table list (is present in the user table)
-        user_profile = get_object_or_404(UserProfile, user=user)
-        print("user_profile", user_profile)
-        # this will create the profile if not present in the user table
-        followers_count = UserProfile.objects.count()
-        print("followers_count",followers_count)
-        # this will use inbuild function which is .counter method
-        Logged_user_following = UserProfile.objects.filter(another_user__another_user__user_id=user)
-        print("Logged_user_following",Logged_user_following)
-        # user_followings = UserProfile.objects.filter(blogId__membersId=user)
-        #this user_followings will be user .filter to filter followers from member table
-        followings = Logged_user_following.count()
-        print("followings",followings)
-        # This followings is useing .count method ro count total number of following 
-        return render(request, 'profile.html', {'user': users, 'user_profile':user_profile, 'loggedUser':Logged_user_following , 'followers_count':followers_count,'followings':followings })
+        user_profile, _ = UserProfile.objects.get_or_create(user=user)
+        followers_count = user_profile.following.count()
+        logged_user_following = user_profile.following.count()
+        return render(request, 'profile.html', {'user': user, 'user_profile': user_profile, 'loggedUser': logged_user_following, 'followers_count': followers_count, 'followings': logged_user_following})
     else:
         return redirect('login')
-# =================================================================profile_details ====================================================
-    # this fuction is user to see whoes blog post is it and 
-def profile_details(request):
+    
+# ==================================================================================================
+
+def profile_detail(request, membersId):
     user_email = request.session.get("email")
     if user_email:
-        users = members.objects.filter(uEmail=user_email)
-        loggedUser = members.objects.filter(uEmail=user_email).first()
-        user = get_object_or_404(members, uEmail=user_email)  
-        user_profile = UserProfile.objects.get_or_create(user=user)
-        followers_count = user_profile.followers.count()
-        user_followings = UserProfile.objects.filter(followers=user)
-        return render(request, 'profile_detail.html', {'users': users, 'user_profile':user_profile,'loggedUser':loggedUser,'followers_count':followers_count,'user_followings':user_followings })
+        user = get_object_or_404(members, membersId=membersId)
+        logged_user = members.objects.filter(uEmail=user_email).first()
+        user = get_object_or_404(members, membersId=membersId)  
+        user_profile, _ = UserProfile.objects.get_or_create(user=user)
+        followers_count = user_profile.following.count()
+        user_followings = UserProfile.objects.filter(following=user)
+        return render(request, 'profile_detail.html', {'user': user, 'user_profile': user_profile, 'loggedUser': logged_user, 'followers_count': followers_count, 'user_followings': user_followings})
     else:
         return redirect('login')
-# =================================================================following =================================================================
+
 def following(request, membersId):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:
         user_to_follow = get_object_or_404(members, membersId=membersId)
-        # this variable is used to keep track of user is  folowed or not if not then it will create and save it in this variable
         following_user = get_object_or_404(members, uEmail=user_email)
-        # this variable  is user to check if the following_user is a following the user(logedin user or not )
-        user_profile = UserProfile.objects.get_or_create(user=user_to_follow)
-        # this use get or create method in this case if the user is folowing the outher account then it will get or it will create a new account
-        user_profile.followers.add(following_user)
-        # after creating or getting the user the above value of user_profile will add with .add method in case number 2 that id following_user.
-        return redirect('profile_details', membersId=membersId)
+        user_profile, _ = UserProfile.objects.get_or_create(user=user_to_follow)
+        user_profile.following.add(following_user)
+        return redirect('profile_detail', membersId=membersId)
     else:
         return redirect('login')
 
-# # =================================================================unfollow =================================================================
-    
 def unfollow(request, membersId):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:
         user_to_unfollow = get_object_or_404(members, membersId=membersId)
-
-        following_user = get_object_or_404(members, userEmail=user_email)
-
-        user_profile= UserProfile.objects.get_or_create(user=user_to_unfollow)
-        # this varibale will user_profile get or create the vaue if the user is in user_to_unfollow, if not then it will create and store it in this user_to_unfollow
-        user_profile.followers.remove(following_user)
-        #  user_profile is useing .remove method to remove and the store it in following_user which will show the user.
+        following_user = get_object_or_404(members, uEmail=user_email)
+        user_profile = UserProfile.objects.get(user=user_to_unfollow)
+        user_profile.following.remove(following_user)
         return redirect('profile_detail', membersId=membersId)
     else:
         return redirect('login')
+
 # =================================================================================================
 # ============================activate=====================================
 # activate and deactivate members
