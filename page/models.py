@@ -11,9 +11,7 @@ class members(models.Model):
     images = models.ImageField(upload_to='profile')
     forgetPassToken = models.CharField(max_length=100, null=True)
 
-    def __str__(self):
-        return self.uName
-    
+
 class blog(models.Model):
     membersId = models.ForeignKey(members,on_delete=models.CASCADE,null=True)
     blogId = models.AutoField(primary_key=True)
@@ -39,7 +37,7 @@ class Follow(models.Model):
 class rating(models.Model):
     user = models.ForeignKey(members, on_delete=models.CASCADE)
     blogId = models.ForeignKey(blog, on_delete=models.CASCADE)
-    ratingvalue = models.IntegerField(default=0,null = True, blank=True)
+    ratingvalue = models.IntegerField(default=0)
     
 class UserProfile(models.Model):
     user = models.OneToOneField(members, on_delete=models.CASCADE)

@@ -2,9 +2,9 @@
 from django.contrib import admin
 from.models import *
 
-class PersonModelAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "email"]
-admin.site.register(blog)
+class blogModelAdmin(admin.ModelAdmin):
+    list_display = ["blogId", "title", "description"]
+admin.site.register(blog, blogModelAdmin)
 
 class membersModelAdmin(admin.ModelAdmin):
     list_display = ["membersId", "uName", "uEmail","uPass"]

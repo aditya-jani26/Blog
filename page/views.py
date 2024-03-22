@@ -1,6 +1,4 @@
 import datetime
-import django
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password,make_password
 from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
@@ -63,7 +61,7 @@ def login(request):
             return redirect('homepage')
         elif User.objects.filter(email=user.email).exists() and check_password(uPass, request.user.password):
             request.session['email'] = user.email
-            return redirect('adminDash')
+            return redirect('admindash')
         else:
             message = "Either Your Email Address or Password is incorrect...!!!"
             return render(request, "login.html", {'message':message})               
@@ -113,13 +111,13 @@ def myblog(request):
 #====-site-=========================-site-=======================-site-================================================
 # this is will show all the blog posts
     
-@login_required
+
 def homepage(request):
     user_email = request.session.get('email')
     if user_email:
         users = members.objects.all()
         logged_in_user = members.objects.get(uEmail=user_email)       
-        blogs = blog.objects.all()
+        # blogs = blog.objects.all()
         blogs = blog.objects.exclude(membersId=logged_in_user)
         comments = Comment.objects.all()
         ratings = rating.objects.all()
@@ -143,6 +141,7 @@ def add_comment(request, pk):
                 commentContent=comment_content
             )
             new_comment.save()
+            print("pk",pk)
             return redirect('homepage')
         else:
             blog_instance = get_object_or_404(blog, blogId=pk)
@@ -158,20 +157,20 @@ def ratings(request, pk):
         if request.method == 'POST':
             
             ratingvalue = request.POST.get('ratingvalue')
-
             print("rating value",ratingvalue)
-
             obj = members.objects.get(uEmail=request.session['email'])  
             print("user obj",obj)
             user_instance =  get_object_or_404(members,membersId=obj.membersId)
             print("user user_instance",user_instance)
-
             blog_instance = get_object_or_404(blog, blogId=pk)
             print("user blog_instance",blog_instance)
+            print("pk",pk)
 
             if user_instance.uEmail != blog_instance.membersId.uEmail:
-              rating.objects.update_or_create(blogId=blog_instance, user=user_instance, defaults={'ratingvalue': ratingvalue})
-            return redirect('homepage')
+                rating.objects.update_or_create(blogId=blog_instance, user=user_instance, defaults={'ratingvalue': ratingvalue})
+                return redirect('homepage')
+            else:
+                return redirect('login')
     else:
         return redirect('login') 
 # ==========================================changePass======================changePass======================
@@ -218,7 +217,20 @@ def profile(request):
         user_profile, _ = UserProfile.objects.get_or_create(user=user)
         followers_count = user_profile.following.count()
         logged_user_following = user_profile.following.count()
-        return render(request, 'profile.html', {'user': user, 'user_profile': user_profile, 'loggedUser': logged_user_following, 'followers_count': followers_count, 'followings': logged_user_following})
+        # avg_rating = rating.objects.filter(blogId__membersId=user)
+        # j=0
+        # count = 0
+        # for i in avg_rating:
+        #     j = j + i.ratingvalue
+        #     count += 1 
+        # if count != 0: 
+        #     x = j/count
+        # else:
+        #     x=0
+        # avg = round(x, 2)
+        # followings = logged_user_following.count()
+     
+        return render(request, 'profile.html', {'users': users, 'user_profile': user_profile, 'followers_count':followers_count,'logged_user_following': logged_user_following})
     else:
         return redirect('login')
     
@@ -227,17 +239,30 @@ def profile(request):
 def profile_detail(request, membersId):
     user_email = request.session.get("email")
     if user_email:
-        user = get_object_or_404(members, membersId=membersId)
-        logged_user = members.objects.filter(uEmail=user_email).first()
+        users = members.objects.filter(membersId=membersId)  
+        loggedUser = members.objects.filter(uEmail=user_email).first()
         user = get_object_or_404(members, membersId=membersId)  
-        user_profile, _ = UserProfile.objects.get_or_create(user=user)
+        user_profile, created = UserProfile.objects.get_or_create(user=user)
         followers_count = user_profile.following.count()
-        user_followings = UserProfile.objects.filter(following=user)
-        return render(request, 'profile_detail.html', {'user': user, 'user_profile': user_profile, 'loggedUser': logged_user, 'followers_count': followers_count, 'user_followings': user_followings})
+        user_followings = UserProfile.objects.filter(following=user).count()
+        # avg_rating = rating.objects.filter(blogId__membersId=user)
+        # j=0
+        # count = 0
+        # for i in avg_rating:
+        #     j = j + i.ratingvalue
+        #     count += 1 
+        # if count != 0: 
+        #     x = j/count
+        # else:
+        #     x=0
+        # avg = round(x, 2)
+        # followings = user_followings.count()
+        return render(request, 'profile_detail.html', {'users': users, 'user_profile': user_profile, 'loggedUser': loggedUser, 'followers_count': followers_count, 'user_followings': user_followings})
     else:
         return redirect('login')
 
-def following(request, membersId):
+
+def follow(request, membersId):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:
         user_to_follow = get_object_or_404(members, membersId=membersId)
@@ -248,21 +273,22 @@ def following(request, membersId):
     else:
         return redirect('login')
 
+
+
 def unfollow(request, membersId):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:
         user_to_unfollow = get_object_or_404(members, membersId=membersId)
         following_user = get_object_or_404(members, uEmail=user_email)
-        user_profile = UserProfile.objects.get(user=user_to_unfollow)
+        user_profile, _ = UserProfile.objects.get_or_create(user=user_to_unfollow)
         user_profile.following.remove(following_user)
         return redirect('profile_detail', membersId=membersId)
     else:
         return redirect('login')
-
 # =================================================================================================
 # ============================activate=====================================
 # activate and deactivate members
-@login_required
+
 def userDeactivate(request, id):
     user = get_object_or_404(members, user_id=id)
     user.is_active = False
@@ -271,7 +297,7 @@ def userDeactivate(request, id):
     return redirect(handeuser)
 
 # =================================================================
-@login_required
+
 def userActivate(request, id):
     user = get_object_or_404(members, user_id=id)
     user.is_active = True
@@ -288,7 +314,7 @@ def admindash(request):
     else:
         return redirect('login')
 #==============================handeuser======================================== 
-@login_required
+
 def handeuser(request):
     user_email = request.session.get('email')
     if user_email:

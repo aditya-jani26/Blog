@@ -14,12 +14,12 @@ def notification(request):
 urlpatterns = [
     path("", views.main,name="main"),
     path("registration/", views.registration, name="registration"),
-    path("login/", views.login,name="login"),
-    path("homepage/", views.homepage, name= "homepage"),
-    path("addblog/", views.addblog, name="addblog"),
-    path("myblog/", views.myblog,name="myblog"),
+    path("login", views.login,name="login"),
+    path("homepage", views.homepage, name= "homepage"),
+    path("addblog", views.addblog, name="addblog"),
+    path("myblog", views.myblog,name="myblog"),
     path("admindash", views.admindash,name="admindash"),
-    path("add_comment/<int:pk>/", views.add_comment, name="add_comment"),
+    path("add_comment/<int:pk>", views.add_comment, name="add_comment"),
     path("ratings/<int:pk>/", views.ratings, name="ratings"),
 
     path("profile/", views.profile, name="profile"),
@@ -34,8 +34,8 @@ urlpatterns = [
     path('reset_password_completed/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('changepass', views.changepass, name='changepass'),
 
-    path('follow/<int:id>/', views.following, name='following'),
-    path('unfollow/<int:id>/', views.unfollow, name='unfollow'),
+    path('follow/<int:membersId>/', views.follow, name='follow'),
+    path('unfollow/<int:membersId>/', views.unfollow, name='unfollow'),
 
     path("userDeactivate",views.userDeactivate, name='userDeactivate'),
     path("userActivate",views.userActivate, name='userActivate'),
