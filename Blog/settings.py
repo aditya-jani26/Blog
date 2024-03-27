@@ -9,17 +9,17 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+from dotenv import load_dotenv
 import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+import os
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
+load_dotenv()
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-@^2-c(@11&99ztay$+exe5g#6p-x2jn52)y2xwks#le+g$x5a8'
 
@@ -148,6 +148,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 Mail_USE_SSL = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'adiyudiz718@gmail.com'
-EMAIL_HOST_PASSWORD = '6353yudiz592494hellO'
+EMAIL_HOST_PASSWORD = 'Emailpassword'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

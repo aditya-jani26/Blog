@@ -122,7 +122,7 @@
   {% for field in blogs %}
   <div class="card">
     <div class="row">
-      <div class="col-md-5 px-7">
+      <div class="col-md-12 px-7">
         <div class="card-body">
           <form action="{% url 'profile_detail'  field.membersId.membersId %}" method="post">
             {% csrf_token %}
@@ -147,7 +147,7 @@
       {% for comment in comments %}
         {% if comment.blog_id.blogId == field.blogId %}
           <div class="comment">
-            <p>{{comment.membersId}}:-> {{ comment.commentDate }}</p>
+            <p>{{comment.membersId.uName}}:-> {{ comment.commentDate }}</p>
             <p>{{ comment.commentContent }}</p>
           </div>
         {% endif %}
