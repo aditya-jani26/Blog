@@ -37,8 +37,8 @@ urlpatterns = [
     path('follow/<int:membersId>/', views.follow, name='follow'),
     path('unfollow/<int:membersId>/', views.unfollow, name='unfollow'),
 
-    path("userDeactivate",views.userDeactivate, name='userDeactivate'),
-    path("userActivate",views.userActivate, name='userActivate'),
+    path("userDeactivate/<int:id>/",views.userDeactivate, name='userDeactivate'),
+    path("userActivate/<int:id>/",views.userActivate, name='userActivate'),
 
     path("author_profiles/", views.author_profiles, name="author_profiles"),
 

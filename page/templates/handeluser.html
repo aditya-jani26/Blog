@@ -1,59 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>handeluser</title>
+    <title>HandelUser</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <style>
-    .body 
-{
+  body {
     background-color: #11878b;
     padding: 50px;
     font-family: Arial, Helvetica, sans-serif;
   }
-    
-    .navbar {
-        background-color: #fff;
-    }
+
+  .card {
+    background-color: #ffffff;
+    box-shadow: 0px 0px 10px rgba(154, 15, 15, 0.1);
+    border-radius: 20px;
+    margin: 20px auto;
+    max-width: 800px;
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+
+  .card-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .card-text {
+    margin-bottom: 20px;
+  }
+
 </style>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary"style="border-radius: 20px;">
-        <div class="container-fluid">
-          <img style="height:50px; width:50px;  border-radius: 60%;" src="https://logo.com/image-cdn/images/kts928pd/production/3d0a1942ea617825e187c3c9a3811a5d93a331be-370x366.png?w=1080&q=72" >
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-              <a class="nav-link active" aria-current="page" href="{% url 'homepage' %}">Home</a>
-              <a class="nav-link" href="{% url 'myblog' %}">My blog</a>
-              <a class="nav-link" href="{% url 'addblog' %}">Add blog</a>
-              <a class="nav-link " href="{% url 'changepass' %}">Change Password</a>
-              <a class="nav-link" href="{% url 'logout' %}">logout</a>
-              <a href="{% url 'profile' %}">
-                <img src="{{ request.user.profile.image.url }}" alt="profile" style="width:42px;height:42px;">
-                </a>
-            </div>
-          </div>
-          <div class="d-flex align-items-center">
-            {% for user in members %}
-              {% if user.uEmail == request.session.email %}
-                <a href="{% url 'profile' %}">
-                  <img
-                  src="{{ user.images }}"
-                  class="rounded-circle"
-                  height="45"
-                  width="48"
-                  alt="User Image"
-                  loading="lazy"
-                  />
-                </a>  
-              {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-      </nav>     
+  <nav class="navbar navbar-expand-lg navbar-dark p-5  pb-2 pt-3">
+    <a class="navbar-brand text-white mx-4" href="#"> Dashboard</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link text-white mx-3" href="{% url 'admindash' %}">Home<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white mx-3" href="{% url 'handeuser' %}">User</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white mx-3" href="{% url 'logout' %}">Log out</a>
+          </li>
+      </ul>
+    </div>
+  </nav>    
     <section class="vh-100 gradient-custom">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">

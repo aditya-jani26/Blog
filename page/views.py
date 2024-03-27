@@ -282,7 +282,7 @@ def unfollow(request, membersId):
 # activate and deactivate members
 
 def userDeactivate(request, id):
-    user = get_object_or_404(members, user_id=id)
+    user = get_object_or_404(members, membersId=id)
     user.is_active = False
     # this is useing .is_active method see if that value is False ()
     user.save()
@@ -291,7 +291,7 @@ def userDeactivate(request, id):
 # =================================================================
 
 def userActivate(request, id):
-    user = get_object_or_404(members, user_id=id)
+    user = get_object_or_404(members, membersId=id)
     user.is_active = True
     # this is using .is_active method and see this value of user(member) value with this method is coming true or not.
     user.save()

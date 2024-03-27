@@ -10,6 +10,7 @@ class members(models.Model):
     about = models.TextField(max_length=500, null=True, blank=True)
     images = models.ImageField(upload_to='profile')
     forgetPassToken = models.CharField(max_length=100, null=True)
+    is_active = models.BooleanField(default=True)
 
 
 class blog(models.Model):
