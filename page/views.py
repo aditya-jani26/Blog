@@ -68,46 +68,59 @@ def login(request):
     return render(request, 'login.html')
 
 # ===========addblog======================addblog====================================addblog============================
-    # This is used when any member want to add a new blog
-def addblog(request): 
+def addblog(request):
     user_email = request.session.get('email')
+    
     if user_email:
         if request.method == 'POST':
-            date = datetime.date.today()
-            time = datetime.datetime.now()
+            # Fetching necessary data
+            logged_in_user = get_object_or_404(members, uEmail=user_email)
+            
+            # Extracting form data
             title = request.POST.get('title')
             description = request.POST.get('description')
             images = request.FILES.get('images')
-            obj= members.objects.get(uEmail=user_email)
-            logedinUser = get_object_or_404(members,membersId=obj.membersId)
-            # print(logedinUser.membersId)
-            obj = blog.objects.create(membersId=logedinUser, date=date, title=title, description=description,images=images,time=time)
+            
+            # Saving blog entry
+            new_blog_entry = blog.objects.create(
+                membersId=logged_in_user,
+                date=datetime.date.today(),
+                title=title,
+                description=description,
+                images=images,
+                time=datetime.datetime.now()
+            )
+            
+            # Saving uploaded image
             fs = FileSystemStorage()
-
             filename = fs.save(images.name, images)
             uploaded_img_url = fs.url(filename)
-            obj.images = uploaded_img_url
-            obj.save()
-
+            new_blog_entry.images = uploaded_img_url
+            new_blog_entry.save()
+            
             return redirect('addblog')
-        return render(request,'addblog.html')
+        
+        return render(request, 'addblog.html')
     else:
         return redirect('login')
-
 # ====-myblog-=========================-myblog-=======================-myblog-=============
 # # In this all user will only see his own blog
 def myblog(request):
     user_email = request.session.get('email')
+    
     if user_email:
-        users = members.objects.get(uEmail=request.session['email'])
-        user_instance = get_object_or_404(members, membersId = users.membersId)
-
+        # Fetching necessary data
+        user_instance = get_object_or_404(members, uEmail=user_email)
+        
+        # Retrieving user's blogs
         myblogs = blog.objects.filter(membersId=user_instance)
-        loggedUser = members.objects.all()
-        return render(request,'myblog.html',{'myblogs':myblogs, 'loggedUser':loggedUser})
+        
+        # Fetching all logged-in users
+        logged_users = members.objects.all()
+        
+        return render(request, 'myblog.html', {'myblogs': myblogs, 'loggedUser': logged_users})
     else:
         return redirect('login')
-
 #====-site-=========================-site-=======================-site-================================================
 # this is will show all the blog posts
     
@@ -115,38 +128,44 @@ def myblog(request):
 def homepage(request):
     user_email = request.session.get('email')
     if user_email:
-        users = members.objects.all()
-        logged_in_user = members.objects.get(uEmail=user_email)       
-        # blogs = blog.objects.all()
-        blogs = blog.objects.exclude(membersId=logged_in_user)
-        comments = Comment.objects.all()
-        ratings = rating.objects.all()
-        return render(request, 'homepage.html', {'blogs':blogs, 'comments':comments,'ratings':ratings,'users':users})
-    else:
-        return redirect('login')
+        # Fetch logged in user
+        logged_in_user = members.objects.filter(uEmail=user_email).first()
+        
+        if logged_in_user:
+            # Fetch all users
+            users = members.objects.all()
 
+            # Fetch blogs excluding those of logged in user
+            blogs = blog.objects.exclude(membersId=logged_in_user)
+            
+            # Fetch all comments
+            comments = Comment.objects.all()
+            
+            # Fetch all ratings
+            ratings = rating.objects.all()
+            
+            return render(request, 'homepage.html', {'blogs': blogs, 'comments': comments, 'ratings': ratings, 'users': users})
+        
+    return redirect('login')
 # =========add_comment======================================add_comment=====================================add_comment=============
 
 def add_comment(request, pk):
     user_email = request.session.get('email')
     if user_email:
+        user_instance = get_object_or_404(members, uEmail=user_email)
+        blog_instance = get_object_or_404(blog, blogId=pk)
+
         if request.method == 'POST':
             comment_content = request.POST.get('commentContent')
-            user_instance = get_object_or_404(members, uEmail=user_email)
-            blog_instance = get_object_or_404(blog, blogId=pk)
-            
             new_comment = Comment.objects.create(
                 blog_id=blog_instance,
                 membersId=user_instance,
                 commentContent=comment_content
             )
-            new_comment.save()
-            print("pk",pk)
             return redirect('homepage')
         else:
-            blog_instance = get_object_or_404(blog, blogId=pk)
             comments_list = Comment.objects.filter(blogId=blog_instance)
-        return render(request, 'homepage.html', {'blog_instance': blog_instance, 'comments': comments_list})
+            return render(request, 'homepage.html', {'blog_instance': blog_instance, 'comments': comments_list})
     else:
         return redirect('login')
 # -= ===============rating==================================rating=============rating================================ 
@@ -208,60 +227,33 @@ def changepass(request):
 # This is use to get profile of user and this will creatre profile page where the information of user will be available
 # this will show the profile of user who is logged in.
 
-
 def profile(request):
     user_email = request.session.get('email')
     if user_email:
-        users = members.objects.filter(uEmail=user_email)
         user = get_object_or_404(members, uEmail=user_email)
         user_profile, _ = UserProfile.objects.get_or_create(user=user)
         followers_count = user_profile.following.count()
-        logged_user_following = user_profile.following.count()
-        # avg_rating = rating.objects.filter(blogId__membersId=user)
-        # j=0
-        # count = 0
-        # for i in avg_rating:
-        #     j = j + i.ratingvalue
-        #     count += 1 
-        # if count != 0: 
-        #     x = j/count
-        # else:
-        #     x=0
-        # avg = round(x, 2)
-        # followings = logged_user_following.count()
-     
-        return render(request, 'profile.html', {'users': users, 'user_profile': user_profile, 'followers_count':followers_count,'logged_user_following': logged_user_following})
+        logged_user_followings = followers_count  # No need for separate count() call
+        avg_rating = rating.objects.filter(blogId__membersId=user).aggregate(avg_rating=models.Avg('ratingvalue'))
+        avg = round(avg_rating['avg_rating'], 2) if avg_rating['avg_rating'] is not None else 0
+        print("avg", avg)
+        return render(request, 'profile.html', {'user': user, 'followers_count': followers_count, 'avg': avg, 'followings': logged_user_followings})
     else:
         return redirect('login')
     
-# ==================================================================================================
-
 def profile_detail(request, membersId):
     user_email = request.session.get("email")
     if user_email:
-        users = members.objects.filter(membersId=membersId)  
-        loggedUser = members.objects.filter(uEmail=user_email).first()
-        user = get_object_or_404(members, membersId=membersId)  
-        user_profile, created = UserProfile.objects.get_or_create(user=user)
+        user = get_object_or_404(members, membersId=membersId)
+        logged_user = get_object_or_404(members, uEmail=user_email)
+        user_profile, _ = UserProfile.objects.get_or_create(user=user)
         followers_count = user_profile.following.count()
         user_followings = UserProfile.objects.filter(following=user).count()
-        # avg_rating = rating.objects.filter(blogId__membersId=user)
-        # j=0
-        # count = 0
-        # for i in avg_rating:
-        #     j = j + i.ratingvalue
-        #     count += 1 
-        # if count != 0: 
-        #     x = j/count
-        # else:
-        #     x=0
-        # avg = round(x, 2)
-        # followings = user_followings.count()
-        return render(request, 'profile_detail.html', {'users': users, 'user_profile': user_profile, 'loggedUser': loggedUser, 'followers_count': followers_count, 'user_followings': user_followings})
+        avg_rating = rating.objects.filter(blogId__membersId=user).aggregate(avg_rating=models.Avg('ratingvalue'))
+        avg = round(avg_rating['avg_rating'], 2) if avg_rating['avg_rating'] is not None else 0
+        return render(request, 'profile_detail.html', {'user': user, 'user_profile': user_profile, 'logged_user': logged_user, 'followers_count': followers_count, 'user_followings': user_followings, 'avg_rating': avg})
     else:
         return redirect('login')
-
-
 def follow(request, membersId):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:

@@ -14,11 +14,11 @@ def notification(request):
 urlpatterns = [
     path("", views.main,name="main"),
     path("registration/", views.registration, name="registration"),
-    path("login", views.login,name="login"),
-    path("homepage", views.homepage, name= "homepage"),
-    path("addblog", views.addblog, name="addblog"),
-    path("myblog", views.myblog,name="myblog"),
-    path("admindash", views.admindash,name="admindash"),
+    path("login/", views.login,name="login"),
+    path("homepage/", views.homepage, name= "homepage"),
+    path("addblog/", views.addblog, name="addblog"),
+    path("myblog/", views.myblog,name="myblog"),
+    path("admindash/", views.admindash,name="admindash"),
     path("add_comment/<int:pk>", views.add_comment, name="add_comment"),
     path("ratings/<int:pk>/", views.ratings, name="ratings"),
 

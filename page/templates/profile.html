@@ -75,7 +75,7 @@
             </div>
           </div>
           <div class="d-flex align-items-center">
-            {% for user in members %}
+            {% for user in users %}
               {% if user.uEmail == request.session.email %}
                 <a href="{% url 'profile' %}">
                   <img
@@ -112,46 +112,46 @@
       </nav> 
         <!-- Profile -->
         <section class="vh-10" style="background-color:gradient-custom ">
-          {% for user in users %}
-              <div class="container py-5 h-10">
-                <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="container py-5 h-10">
+              <div class="row d-flex justify-content-center align-items-center h-100">
                   <div class="col col-md-9 col-lg-7 col-xl-5">
-                    <div class="card" style="border-radius: 20px;">
-                      <div class="card-body p-4">
-                        <div class="d-flex text-black">
-                          <div class="flex-shrink-0">
-                            <div class="col-md-5">
-                              <div>
-                                <img src= '{{ user.images }}' alt="images"  class="img-fluid"style="width:100%; height:100%; border-radius: 7px;">
+                      <div class="card" style="border-radius: 20px;">
+                          <div class="card-body p-4">
+                              <div class="d-flex text-black">
+                                  <div class="flex-shrink-0">
+                                      <div class="col-md-5">
+                                          <div>
+                                              <!-- User profile image -->
+                                              <img src="{{ user.images }}" alt="Profile Image" class="img-fluid" style="width:100%; height:100%; border-radius: 7px;">
+                                          </div>
+                                          <div class="d-flex justify-content-center rounded-3 p-1 mb-1">
+                                              <!-- User name and about -->
+                                              <p class="mb-1">{{ user.uName }}- </p>
+                                              <p class="mb-2 pb-1">{{ user.about }}</p>
+                                          </div>
+                                          <div class="h-100 d-flex align-items-center justify-content-centert">
+                                              <!-- User following, followers, and rating -->
+                                              <div>
+                                                  <p class="small text-muted mb-1">Following</p>
+                                                  <p class="mb-0">{{ followings }}</p>
+                                              </div>
+                                              <div class="px-3">
+                                                  <p class="small text-muted mb-1">Followers</p>
+                                                  <p class="mb-0">{{ followers_count }}</p>
+                                              </div>
+                                              <div class="px-3">
+                                                  <p class="small text-muted mb-1">Rating</p>
+                                                  <p class="mb-0">{{ avg }}</p>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
                               </div>
-                          <div class="d-flex justify-content-center rounded-3 p-1 mb-1">
-                            <p class="mb-1">{{ user.uName }}- </p>
-                            <p class="mb-2 pb-1">{{ user.about }}</p>
-                          </div>  
-                            <div class="h-100 d-flex align-items-center justify-content-centert " >
-                                <div>
-                                  <p class="small text-muted mb-1">Following</p>
-                                  <p class="mb-0">{{ logged_user_following }}</p>
-                                </div>
-                                <div class="px-3">
-                                  <p class="small text-muted mb-1">Followers</p>
-                                  <p class="mb-0">{{ followers_count }}</p>
-                                </div>
-                                <div class="px-3">
-                                  <p class="small text-muted mb-1">Rating</p>
-                                  <p class="mb-0">{{ avg_rating }}</p>
-                                </div>
-                            </div>
-                            
-                            </div>
                           </div>
-                        </div>
                       </div>
-                    </div>
                   </div>
-                </div>
               </div>
-              {% endfor %}
-            </section>
+          </div>
+      </section>
 </body>
 </html>
