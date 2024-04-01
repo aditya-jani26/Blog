@@ -257,10 +257,15 @@ def profile_detail(request, membersId):
 def follow(request, membersId):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:
+# Inside this condition, it retrieves the members object corresponding to the membersId provided in the URL:
         user_to_follow = get_object_or_404(members, membersId=membersId)
+# It also retrieves the members object corresponding to the currently logged-in user using their email:
         following_user = get_object_or_404(members, uEmail=user_email)
+# It then gets or creates a UserProfile object associated with the user to be followed:
         user_profile, _ = UserProfile.objects.get_or_create(user=user_to_follow)
+# It adds the currently logged-in user (retrieved in step 5) to the list of users that the user represented by user_profile is following:
         user_profile.following.add(following_user)
+
         return redirect('profile_detail', membersId=membersId)
     else:
         return redirect('login')
