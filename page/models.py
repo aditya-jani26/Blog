@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
 
-
 class members(models.Model):
     membersId = models.AutoField(primary_key=True, unique=True)
     uName = models.CharField(max_length=100, null=True, blank=True)
@@ -11,7 +10,6 @@ class members(models.Model):
     images = models.ImageField(upload_to='profile')
     forgetPassToken = models.CharField(max_length=100, null=True)
     is_active = models.BooleanField(default=True)
-
 
 class blog(models.Model):
     membersId = models.ForeignKey(members,on_delete=models.CASCADE,null=True)
@@ -28,7 +26,6 @@ class Comment(models.Model):
     comment_id = models.AutoField(primary_key=True)
     commentContent = models.TextField(max_length=300,null=True, blank=True)
     commentDate = models.DateTimeField(default=now)
-
 
 class Follow(models.Model):
     follower = models.ForeignKey(members, related_name='following_relationships', on_delete=models.CASCADE)

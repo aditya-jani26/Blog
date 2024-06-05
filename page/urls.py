@@ -41,7 +41,7 @@ urlpatterns = [
     path("userActivate/<int:id>/",views.userActivate, name='userActivate'),
 
     path("author_profiles/", views.author_profiles, name="author_profiles"),
-
+    path('bloges/', views.bloges, name='bloges'),
     
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

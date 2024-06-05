@@ -4,7 +4,24 @@ from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
+from django.core.paginator import Paginator
+from django.core.paginator import Paginator
+from django.shortcuts import render
+import datetime
+from django.contrib.auth.hashers import check_password, make_password
+from django.core.files.storage import FileSystemStorage
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import *
+from django.core.paginator import Paginator
 
+def bloges(request):
+    blog_list = blog.objects.all()
+    print("Blog", type(blog_list), "list of blog ", blog_list)
+    paginator = Paginator(blog_list, 2)  # Display 2 blog posts per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    print("Paginator", page_obj)
+    return render(request, 'list.html', {'page_obj': page_obj})
 
 # from django.urls import reverse_lazy
 # from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView
@@ -146,7 +163,7 @@ def homepage(request):
             
             return render(request, 'homepage.html', {'blogs': blogs, 'comments': comments, 'ratings': ratings, 'users': users})
         
-    return redirect('login')
+    return redirect('listing')
 # =========add_comment======================================add_comment=====================================add_comment=============
 
 def add_comment(request, pk):

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'page'
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -151,3 +152,8 @@ EMAIL_HOST_USER = 'adiyudiz718@gmail.com'
 EMAIL_HOST_PASSWORD = 'Emailpassword'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
